@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "comments")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor

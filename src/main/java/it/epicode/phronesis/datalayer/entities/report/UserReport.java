@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "userReports")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor

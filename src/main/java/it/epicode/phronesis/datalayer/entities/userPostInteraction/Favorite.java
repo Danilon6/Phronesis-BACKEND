@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "favorites")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor

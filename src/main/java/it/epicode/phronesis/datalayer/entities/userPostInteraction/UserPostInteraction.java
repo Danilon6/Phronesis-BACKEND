@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@Entity
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
