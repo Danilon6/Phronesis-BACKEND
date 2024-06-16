@@ -1,10 +1,7 @@
 package it.epicode.phronesis.datalayer.entities;
 
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -18,8 +15,10 @@ import java.util.List;
 @Builder(setterPrefix = "with")
 public class Post extends BaseEntity{
 
+    @Column(length = 100, nullable = false, unique = true)
     private String title;
 
+    @Column(nullable = false)
     private String content;
 
     private String imageUrl;

@@ -1,6 +1,7 @@
 package it.epicode.phronesis.businesslayer.services.dto.post;
 
 import it.epicode.phronesis.businesslayer.services.dto.BaseDTO;
+import it.epicode.phronesis.businesslayer.services.dto.UserResponseForPostDTO;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
 import lombok.*;
 
@@ -25,7 +26,7 @@ public class PostResponseDTO extends BaseDTO {
 
     private String imageUrl;
 
-    private Long userId;
+    private UserResponseForPostDTO user;
 
     private List<Comment> comments;
 }
