@@ -1,12 +1,14 @@
 package it.epicode.phronesis.businesslayer.services.dto.post;
 
 import it.epicode.phronesis.businesslayer.services.dto.BaseDTO;
-import it.epicode.phronesis.businesslayer.services.dto.UserResponseForPostDTO;
-import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
+import it.epicode.phronesis.businesslayer.services.dto.UserResponsePartialDTO;
+import it.epicode.phronesis.businesslayer.services.dto.userPostInteraction.CommentResponseDTO;
+import it.epicode.phronesis.businesslayer.services.dto.userPostInteraction.UserPostInteractionResponseDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -26,7 +28,9 @@ public class PostResponseDTO extends BaseDTO {
 
     private String imageUrl;
 
-    private UserResponseForPostDTO user;
+    private UserResponsePartialDTO user;
 
-    private List<Comment> comments;
+    private List<CommentResponseDTO> comments;
+
+    private List<UserPostInteractionResponseDTO> likes;
 }

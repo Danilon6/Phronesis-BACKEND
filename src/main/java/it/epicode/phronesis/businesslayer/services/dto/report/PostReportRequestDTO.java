@@ -9,5 +9,5 @@ import lombok.*;
 @Builder(setterPrefix = "with")
 public class PostReportRequestDTO extends ReportRequestDTO {
 
-    private Long reportedPost;
+    private Long reportedPostId;
 }

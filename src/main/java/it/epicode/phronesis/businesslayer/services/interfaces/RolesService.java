@@ -6,7 +6,7 @@ import it.epicode.phronesis.businesslayer.services.dto.RolesResponsePrj;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface RolesService<Roles, RolesDTO>{
+public interface RolesService{
 
     Page<RolesResponsePrj> getAll(Pageable p);
 

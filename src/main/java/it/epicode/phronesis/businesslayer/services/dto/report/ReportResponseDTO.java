@@ -1,6 +1,7 @@
 package it.epicode.phronesis.businesslayer.services.dto.report;
 
 import it.epicode.phronesis.businesslayer.services.dto.BaseDTO;
+import it.epicode.phronesis.businesslayer.services.dto.UserResponsePartialDTO;
 import it.epicode.phronesis.datalayer.entities.User;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class ReportResponseDTO extends BaseDTO {
 
     private LocalDateTime updatedAt;
 
-    private User reportedBy;
+    private UserResponsePartialDTO reportedBy;
 
     private String reason;
 

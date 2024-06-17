@@ -1,5 +1,6 @@
 package it.epicode.phronesis.businesslayer.services.dto.report;
 
+import it.epicode.phronesis.businesslayer.services.dto.post.PostPartialResponseDTO;
 import it.epicode.phronesis.datalayer.entities.Post;
 import lombok.*;
 
@@ -10,5 +11,5 @@ import lombok.*;
 @Builder(setterPrefix = "with")
 public class PostReportResponseDTO extends ReportResponseDTO{
 
-    private Post reportedPost;
+    private PostPartialResponseDTO reportedPost;
 }

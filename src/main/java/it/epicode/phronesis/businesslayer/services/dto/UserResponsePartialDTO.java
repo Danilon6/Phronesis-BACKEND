@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(setterPrefix = "with")
-public class UserResponseForPostDTO extends BaseDTO {
+public class UserResponsePartialDTO extends BaseDTO {
 
     Long id;
 

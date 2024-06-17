@@ -1,24 +1,14 @@
 package it.epicode.phronesis.businesslayer.services.dto.userPostInteraction;
 
-import it.epicode.phronesis.businesslayer.services.dto.BaseDTO;
-import it.epicode.phronesis.datalayer.entities.User;
+
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(setterPrefix = "with")
-public class CommentResponseDTO extends BaseDTO {
-    private Long id;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    private User user;
+public class CommentResponseDTO extends UserPostInteractionResponseDTO {
 
     private String content;
 }

@@ -1,5 +1,6 @@
 package it.epicode.phronesis.datalayer.entities.userPostInteraction;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import it.epicode.phronesis.datalayer.entities.BaseEntity;
 import it.epicode.phronesis.datalayer.entities.Post;
 import it.epicode.phronesis.datalayer.entities.User;
@@ -14,9 +15,11 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "interaction_type", discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor
-public class UserPostInteraction extends BaseEntity {
+public abstract class UserPostInteraction extends BaseEntity {
+
     @ManyToOne
     private User user;
     @ManyToOne
+    @JsonBackReference
     private Post post;
 }

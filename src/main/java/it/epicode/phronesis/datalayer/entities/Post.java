@@ -1,6 +1,8 @@
 package it.epicode.phronesis.datalayer.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
+import it.epicode.phronesis.datalayer.entities.userPostInteraction.Like;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +28,14 @@ public class Post extends BaseEntity{
     @ManyToOne
     private User user;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    private List<Like> likes;
 
 }

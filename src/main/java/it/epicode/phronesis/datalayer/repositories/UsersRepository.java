@@ -1,6 +1,9 @@
 package it.epicode.phronesis.datalayer.repositories;
 
+import it.epicode.phronesis.businesslayer.services.dto.RegisteredUserPrj;
 import it.epicode.phronesis.datalayer.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,4 +15,5 @@ public interface UsersRepository extends JpaRepository<User, Long> {
 	Optional<User> findOneByUsernameAndPassword(String username, String password);
 	Optional<User> findOneByUsername(String username);
 	List<User> findByRoles_RoleType(String role);
+	Page<RegisteredUserPrj> findAllBy(Pageable pageable);
 }
