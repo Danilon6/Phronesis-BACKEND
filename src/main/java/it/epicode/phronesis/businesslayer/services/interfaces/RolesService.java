@@ -1,8 +1,8 @@
 package it.epicode.phronesis.businesslayer.services.interfaces;
 
-import it.epicode.phronesis.businesslayer.services.dto.RolesRequestDTO;
-import it.epicode.phronesis.businesslayer.services.dto.RolesResponseDTO;
-import it.epicode.phronesis.businesslayer.services.dto.RolesResponsePrj;
+import it.epicode.phronesis.businesslayer.dto.RolesResponsePrj;
+import it.epicode.phronesis.businesslayer.dto.RolesRequestDTO;
+import it.epicode.phronesis.businesslayer.dto.RolesResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

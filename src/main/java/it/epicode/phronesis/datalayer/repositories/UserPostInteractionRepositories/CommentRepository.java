@@ -2,5 +2,9 @@ package it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositor
 
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
 
+import java.util.List;
+
 public interface CommentRepository extends UserPostInteractionRepository<Comment>{
+
+    List<Comment> findByPostId(Long postId);
 }

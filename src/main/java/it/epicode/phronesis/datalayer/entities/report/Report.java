@@ -3,9 +3,7 @@ package it.epicode.phronesis.datalayer.entities.report;
 import it.epicode.phronesis.datalayer.entities.BaseEntity;
 import it.epicode.phronesis.datalayer.entities.User;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @EqualsAndHashCode(callSuper = true)

@@ -20,7 +20,7 @@ public class Post extends BaseEntity{
     @Column(length = 100, nullable = false, unique = true)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String content;
 
     private String imageUrl;
@@ -28,12 +28,13 @@ public class Post extends BaseEntity{
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    //di defualt le many sono lazy
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @ToString.Exclude
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @ToString.Exclude
     private List<Like> likes;

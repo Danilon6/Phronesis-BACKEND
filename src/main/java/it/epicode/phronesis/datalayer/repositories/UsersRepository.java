@@ -1,6 +1,6 @@
 package it.epicode.phronesis.datalayer.repositories;
 
-import it.epicode.phronesis.businesslayer.services.dto.RegisteredUserPrj;
+import it.epicode.phronesis.businesslayer.dto.RegisteredUserPrj;
 import it.epicode.phronesis.datalayer.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,9 @@
 package it.epicode.phronesis.datalayer.repositories;
 
+import it.epicode.phronesis.businesslayer.dto.post.PostResponsePrj;
 import it.epicode.phronesis.datalayer.entities.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -11,4 +14,5 @@ public interface PostRepository extends
         PagingAndSortingRepository<Post, Long> {
 
     Optional<Post> findByTitle(String title);
+    Page<PostResponsePrj> findAllBy(Pageable pageable);
 }

@@ -1,11 +1,10 @@
 package it.epicode.phronesis.businesslayer.services.interfaces;
 
 
-import it.epicode.phronesis.businesslayer.services.dto.LoginResponseDTO;
-import it.epicode.phronesis.businesslayer.services.dto.RegisterUserDTO;
-import it.epicode.phronesis.businesslayer.services.dto.RegisteredUserDTO;
-import it.epicode.phronesis.businesslayer.services.dto.RegisteredUserPrj;
+import it.epicode.phronesis.businesslayer.dto.*;
 import it.epicode.phronesis.datalayer.entities.User;
+import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.EmailSendingException;
+import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.UnsupportedEmailEncodingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +22,7 @@ public interface UserService {
 
     Page<RegisteredUserPrj> getAll(Pageable p);
 
-    RegisteredUserDTO update(long id, String username);
+    RegisteredUserDTO update(long id, RegisterUserDTO user);
 
     RegisteredUserDTO delete(Long id);
 
@@ -31,10 +30,10 @@ public interface UserService {
 
     RegisteredUserDTO removeRole(Long id, String role);
 
-    RegisteredUserDTO saveAvatar(long id, MultipartFile file) throws IOException;
+    UserResponsePartialDTO updateProfilePicture(long id, MultipartFile file) throws IOException;
 
     boolean activateUser(String token);
 
-    void requestNewActivationLink(User u);
+    void requestNewActivationLink(User u) throws UnsupportedEmailEncodingException, EmailSendingException;
 
 }

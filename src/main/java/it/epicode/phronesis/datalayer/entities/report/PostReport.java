@@ -13,8 +13,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
-@Builder(setterPrefix = "with")
 @DiscriminatorValue("P")
+@Builder(setterPrefix = "with")
 public class PostReport extends Report{
 
     @ManyToOne

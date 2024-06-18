@@ -2,5 +2,9 @@ package it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositor
 
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Like;
 
+import java.util.List;
+
 public interface LikeRepository extends UserPostInteractionRepository<Like> {
+
+    List<Like> findByPostId(Long postId);
 }
