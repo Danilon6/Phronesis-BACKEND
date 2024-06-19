@@ -20,10 +20,10 @@ public class RegisteredUserDTO {
     String bio;
     private final List<Roles> roles;
     boolean enabled;
+    boolean banned;
 
     @Builder(setterPrefix = "with")
-
-    public RegisteredUserDTO(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, String firstName, String lastName, String username, String email, String profilePicture, String bio, List<Roles> roles, boolean enabled) {
+    public RegisteredUserDTO(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, String firstName, String lastName, String username, String email, String profilePicture, String bio, List<Roles> roles, boolean enabled, boolean banned) {
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -35,5 +35,6 @@ public class RegisteredUserDTO {
         this.bio = bio;
         this.roles = roles;
         this.enabled = enabled;
+        this.banned = banned;
     }
 }

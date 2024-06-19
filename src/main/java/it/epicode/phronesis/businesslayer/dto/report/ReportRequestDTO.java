@@ -7,6 +7,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(setterPrefix = "with")
 public class ReportRequestDTO extends BaseDTO {
 
     private Long reportedById;

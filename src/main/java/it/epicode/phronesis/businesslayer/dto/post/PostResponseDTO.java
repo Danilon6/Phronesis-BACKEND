@@ -32,7 +32,7 @@ public class PostResponseDTO extends BaseDTO {
 
     private UserResponsePartialDTO user;
 
-    private List<CommentResponseDTO> comments;
+    private List<CommentResponsePrj> comments;
 
-    private List<UserPostInteractionResponseDTO> likes;
+    private List<UserPostInteractionResponsePrj> likes;
 }

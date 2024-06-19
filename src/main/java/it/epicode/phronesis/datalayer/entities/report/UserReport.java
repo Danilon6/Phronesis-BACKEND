@@ -1,22 +1,24 @@
 package it.epicode.phronesis.datalayer.entities.report;
 
 import it.epicode.phronesis.datalayer.entities.User;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
+@NoArgsConstructor
 @DiscriminatorValue("U")
-@Builder(setterPrefix = "with")
 public class UserReport extends Report{
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User reportedUser;
+
+    @Builder(setterPrefix = "with")
+    public UserReport(User reportedBy, String reason, User reportedUser) {
+        super(reportedBy, reason);
+        this.reportedUser = reportedUser;
+    }
 }

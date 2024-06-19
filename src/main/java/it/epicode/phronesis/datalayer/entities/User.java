@@ -40,4 +40,8 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private boolean enabled;
+
+    // Campo per gestire lo stato di ban
+    @Column(nullable = false)
+    private boolean banned;
 }

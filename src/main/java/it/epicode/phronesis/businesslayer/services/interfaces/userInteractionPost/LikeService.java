@@ -1,8 +1,13 @@
 package it.epicode.phronesis.businesslayer.services.interfaces.userInteractionPost;
 
+import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseDTO;
+import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponsePrj;
 
-public interface LikeService extends UserPostInteractionService {
+import java.util.List;
 
-    UserPostInteractionResponseDTO getAllByPostId(Long id);
+public interface LikeService extends UserPostInteractionService<UserPostInteractionResponseDTO, UserPostInteractionRequestDTO> {
+
+     List<UserPostInteractionResponsePrj> getAllByPostId(Long id);
+     List<UserPostInteractionResponsePrj> getAllByUserId(Long id);
 }

@@ -1,12 +1,13 @@
 package it.epicode.phronesis.businesslayer.services.interfaces.userInteractionPost;
 
 
+import it.epicode.phronesis.businesslayer.dto.BaseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseDTO;
 
-public interface UserPostInteractionService{
+public interface UserPostInteractionService<T extends BaseDTO, A extends BaseDTO>{
 
-    UserPostInteractionResponseDTO save(UserPostInteractionRequestDTO e);
+    T  save(A e);
 
-    UserPostInteractionResponseDTO delete(Long id);
+    T  delete(Long id);
 }

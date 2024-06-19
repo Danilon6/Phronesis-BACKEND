@@ -5,14 +5,18 @@ import it.epicode.phronesis.businesslayer.dto.*;
 import it.epicode.phronesis.businesslayer.dto.post.PostPartialResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostResponseDTO;
-import it.epicode.phronesis.businesslayer.dto.userPostInteraction.CommentRequestDTO;
-import it.epicode.phronesis.businesslayer.dto.userPostInteraction.CommentResponseDTO;
-import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionRequestDTO;
-import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseDTO;
+import it.epicode.phronesis.businesslayer.dto.report.PostReportRequestDTO;
+import it.epicode.phronesis.businesslayer.dto.report.PostReportResponseDTO;
+import it.epicode.phronesis.businesslayer.dto.report.ReportResponseDTO;
+import it.epicode.phronesis.businesslayer.dto.report.UserReportResponseDTO;
+import it.epicode.phronesis.businesslayer.dto.userPostInteraction.*;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
 import it.epicode.phronesis.datalayer.entities.Post;
 import it.epicode.phronesis.datalayer.entities.Roles;
 import it.epicode.phronesis.datalayer.entities.User;
+import it.epicode.phronesis.datalayer.entities.report.PostReport;
+import it.epicode.phronesis.datalayer.entities.report.Report;
+import it.epicode.phronesis.datalayer.entities.report.UserReport;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Favorite;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Like;
@@ -164,6 +168,9 @@ public class BeansConfiguration {
 	Mapper<Roles, RolesResponseDTO> mapRolesEntity2RolesResponseDTO () {
 		return (input) ->
 				RolesResponseDTO.builder()
+				.withId(input.getId())
+				.withCreatedAt(input.getCreatedAt())
+				.withUpdatedAt(input.getUpdatedAt())
 				.withRoleType(input.getRoleType())
 				.build();
 	}
@@ -215,17 +222,8 @@ public class BeansConfiguration {
 				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser()))
 				.build();
 	}
-	@Bean
-	@Scope("singleton")
-	Mapper<CommentRequestDTO, Comment> mapCommentRequestDTO2Comment () {
-		return (input) -> Comment.builder()
-				//bisogna convertie id in user quindi stessa cosa che abbiamo fatto altrove non ricordo dove
-				//.withPost(input.ge)
 
-				.build();
-	}
-
-//Mapper per i like
+	//Mapper per i like
 	@Bean
 	@Scope("singleton")
 	Mapper<Like, UserPostInteractionResponseDTO> mapLikeEntity2UserPostInteractionResponseDTO() {
@@ -234,6 +232,47 @@ public class BeansConfiguration {
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
 				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser()))
+				.build();
+	}
+
+	//Mapper per i preferiti
+	@Bean
+	@Scope("singleton")
+	Mapper<Favorite, FavoriteResponseDTO> mapFavoriteEntity2FavoriteResponseDTO(){
+		return (input) -> FavoriteResponseDTO.favoriteResponseBuilder()
+				.withId(input.getId())
+				.withCreatedAt(input.getCreatedAt())
+				.withUpdatedAt(input.getUpdatedAt())
+				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser())
+				)
+				.withPost(mapPost2PostResponseDTO().map(input.getPost()))
+				.build();
+	}
+
+	//Mapper per i report
+	@Bean
+	@Scope("singleton")
+	Mapper<PostReport, PostReportResponseDTO> mapPostReportEntity2PostReportResponseDTO(){
+		return (input) -> PostReportResponseDTO.postReportResponseBuilder()
+				.withId(input.getId())
+				.withCreatedAt(input.getCreatedAt())
+				.withUpdatedAt(input.getUpdatedAt())
+				.withReason(input.getReason())
+				.withReportedBy(mapUserEntity2UserResponsePartialDTO().map(input.getReportedBy()))
+				.withReportedPost(mapPost2PostPartialResponseDTO().map(input.getReportedPost()))
+				.build();
+	}
+
+	@Bean
+	@Scope("singleton")
+	Mapper<UserReport, UserReportResponseDTO> mapUserReportEntity2UserReportResponseDTO(){
+		return (input) -> UserReportResponseDTO.userReportResponseBuilder()
+				.withId(input.getId())
+				.withCreatedAt(input.getCreatedAt())
+				.withUpdatedAt(input.getUpdatedAt())
+				.withReason(input.getReason())
+				.withReportedBy(mapUserEntity2UserResponsePartialDTO().map(input.getReportedBy()))
+				.withReportedUser(mapUserEntity2UserResponsePartialDTO().map(input.getReportedUser()))
 				.build();
 	}
 

@@ -14,7 +14,7 @@ public interface CRUDService<T extends BaseDTO, A extends BaseDTO, B extends Bas
 
     T save(A e) throws IOException;
 
-    T update(Long id, T e);
+    T update(Long id, A e) throws IOException;
 
     T delete(Long id);
 }

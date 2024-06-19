@@ -21,10 +21,12 @@ import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.DuplicateTitleException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -73,33 +75,25 @@ public class PostServiceImpl implements PostService {
     public PostResponseDTO getById(Long id) {
         var postEntity =  postRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
 
-        var comments = commentRepository.findByPostId(postEntity.getId())
-                .stream()
-                .map(c-> mapCommentToResponseDTO.map(c))
-                .toList();
+        var comments = commentRepository.findByPostId(postEntity.getId());
+        var likes = likeRepository.findByPostId(postEntity.getId());
 
-        var likes = likeRepository.findByPostId(postEntity.getId())
-                .stream()
-                .map(l -> mapLikeToResponseDTO.map(l))
-                .toList();
+        var postResponse = mapPost2PostResponseDTO.map(postEntity);
 
-        var mapperCustom = PostToPostResponseDTOMapperImpl.builder()
-                .withComments(comments)
-                .withLikes(likes)
-                .build();
-        return mapperCustom.map(postEntity);
+        postResponse.setComments(comments);
+        postResponse.setLikes(likes);
+
+        return postResponse;
     }
 
     @Override
     public PostResponseDTO save(PostRequestDTO e) throws IOException {
         //verifico che il titolo del post non sia duplicato
         var titleDuplicate = postRepository.findByTitle(e.getTitle());
-        //verifico che lo user esista(quetso contorllo potrebbe essere inutile perche se uno user sta facendo il post per forza deve esistere)
-        var user = usersRepository.findById(e.getUserId()).orElseThrow(()-> new NotFoundException(e.getUserId()));
         if (titleDuplicate.isPresent())
             throw new DuplicateTitleException(e.getTitle());
 
-
+        var user = usersRepository.findById(e.getUserId()).orElseThrow(()-> new NotFoundException(e.getUserId()));
 
         //converto la request in una entity
         var postEntity = mapPostRequestDTO2Post.map(e);
@@ -115,18 +109,29 @@ public class PostServiceImpl implements PostService {
         }
 
         //salvo l'entità
-
         var postSaved = postRepository.save(postEntity);
 
-        //converto il post appena salavto in una response
+        //converto il post appena salvato in una response
         //i like e i commenti saranno automaticamente null
         return mapPost2PostResponseDTO.map(postSaved);
 
     }
 
     @Override
-    public PostResponseDTO update(Long id, PostResponseDTO e) {
-        return null;
+    public PostResponseDTO update(Long id, PostRequestDTO e) throws IOException {
+        //non si può modificare l'autore del post quindi non prevedo una conversione da id a User, in futuro potrei prevedere un DTO
+        //diverso per la modifica
+        var post = postRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
+        BeanUtils.copyProperties(e, post);
+
+        if (e.getImageFile()!= null && !e.getImageFile().isEmpty()) {
+            var file = e.getImageFile();
+            var url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+            post.setImageUrl(url);
+        }
+
+        return mapPost2PostResponseDTO.map(postRepository.save(post));
+
     }
 
     @Override
@@ -143,4 +148,6 @@ public class PostServiceImpl implements PostService {
             throw new RuntimeException();
         }
     }
+
+
 }

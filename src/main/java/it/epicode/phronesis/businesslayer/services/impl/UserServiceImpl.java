@@ -215,14 +215,17 @@ public class UserServiceImpl implements UserService {
         return usersRepository.findAllBy(p);
     }
 
-    //risolvere l'update
+    //Nel frontend potrei fornire all utente solo un modulo epr cmabaire i dati tranne l'immagine
+    //per cambaire l'immagine lo amndiamo ad un altro modulo con endpoint diverso
     @Override
     public RegisteredUserDTO update(long id, RegisterUserDTO user) {
         var u = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         var usernameDuplicated = usersRepository.findOneByUsername(user.getUsername());
         var emailDuplicated = usersRepository.findByEmail(user.getEmail());
+        //verifico che l'email cambiata non appartenga a nessun'altro utente
         if (emailDuplicated.isPresent() && !Objects.equals(emailDuplicated.get().getEmail(), user.getEmail())) {
             throw new DuplicateEmailException(user.getEmail());
+        //verifico che lo username cambiato non appartenga a nessun'altro utente
         } else if (usernameDuplicated.isPresent() && !Objects.equals(usernameDuplicated.get().getUsername(), user.getUsername())) {
             throw new DuplicateUsernameException(user.getUsername());
         } else {
@@ -304,12 +307,24 @@ public class UserServiceImpl implements UserService {
 
     }
 
-
     @Override
     public UserResponsePartialDTO updateProfilePicture(long id, MultipartFile file) throws IOException {
         return cloudinaryService.updateProfilePicture(id, file);
     }
 
+    @Override
+    public void banUser(Long id, String reason) throws UnsupportedEmailEncodingException, EmailSendingException {
+        var user = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
+            user.setBanned(true);
+            usersRepository.save(user);
+            mailService.sendBannedEmail(user, reason);
+    }
 
-
+    @Override
+    public void unbanUser(Long id) throws UnsupportedEmailEncodingException, EmailSendingException {
+        var user = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
+            user.setBanned(false);
+            usersRepository.save(user);
+            mailService.sendUnbannedEmail(user);
+    }
 }

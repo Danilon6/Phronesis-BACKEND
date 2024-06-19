@@ -36,4 +36,8 @@ public interface UserService {
 
     void requestNewActivationLink(User u) throws UnsupportedEmailEncodingException, EmailSendingException;
 
+    void banUser(Long userId, String reason) throws UnsupportedEmailEncodingException, EmailSendingException;
+
+    void unbanUser(Long userId) throws UnsupportedEmailEncodingException, EmailSendingException;
+
 }

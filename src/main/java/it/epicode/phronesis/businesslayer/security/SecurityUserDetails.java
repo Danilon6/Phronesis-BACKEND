@@ -29,6 +29,8 @@ public class SecurityUserDetails implements UserDetails {
 	private boolean credentialsNonExpired = true;
 	@Builder.Default
 	private boolean enabled = false;
+	@Builder.Default
+	private boolean banned = false;
 
 	public static SecurityUserDetails build(User user) {
 		var authorities = user.getRoles().stream()
@@ -44,5 +46,10 @@ public class SecurityUserDetails implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return this.enabled;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return !this.banned;
 	}
 }

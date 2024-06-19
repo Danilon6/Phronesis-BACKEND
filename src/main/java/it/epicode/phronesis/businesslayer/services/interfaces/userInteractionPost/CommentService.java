@@ -5,5 +5,9 @@ import it.epicode.phronesis.businesslayer.dto.userPostInteraction.CommentRespons
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.CommentResponsePrj;
 import it.epicode.phronesis.businesslayer.services.interfaces.CRUDService;
 
+import java.util.List;
+
 public interface CommentService extends CRUDService<CommentResponseDTO, CommentRequestDTO, CommentResponsePrj> {
+
+    List<CommentResponsePrj> getAllByPostId(Long id);
 }

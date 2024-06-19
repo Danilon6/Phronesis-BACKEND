@@ -1,4 +1,4 @@
-package it.epicode.phronesis.businesslayer.services.impl;
+package it.epicode.phronesis.businesslayer.services.impl.email;
 
 import it.epicode.phronesis.businesslayer.services.interfaces.email.MailService;
 import it.epicode.phronesis.datalayer.entities.User;
@@ -47,8 +47,9 @@ public class MailServiceImpl implements MailService {
                             + "<li style='font-size: 14px;'>❤️ <strong>Engage with the Community</strong>: Like and favorite posts that resonate with you for easy access later.</li>"
                             + "<li style='font-size: 14px;'>🔒 <strong>Manage Your Profile</strong>: Update your information, upload a profile picture, and manage your posts and comments.</li>"
                             + "</ul>"
-                            + "<p style='font-size: 14px;'>To get started, verify your profile through this link, " + token + " then log in to your account and begin exploring the diverse experiences shared by our community members. Every story you read and share contributes to a more empathetic and understanding world. 🌍</p>"
+                            + "<p style='font-size: 14px;'>To get started, verify your profile through this <a href='" + token + "'>link </a>" + "then log in to your account and begin exploring the diverse experiences shared by our community members. Every story you read and share contributes to a more empathetic and understanding world. 🌍</p>"
                             + "<p style='font-size: 14px;'>❓ If you have any questions or need assistance, please don't hesitate to reach out to our support team via email at <a href='mailto:phronesis_support@phronesis.com'>phronesis_support@phronesis.com</a>.</p>"
+                            + "<p style='font-size: 14px;'> If your link is expired request a new verification link: http://localhost:8080/api/user/request-new-token?email=" + user.getEmail() + "</p>"
                             + "<p style='font-size: 14px;'>Happy Sharing! 💖</p>" + "<p style='font-size: 14px;'>🌟 The Phronesis Team 🌟</p>"
                             + "</div>"
                             + "</div>"
@@ -92,6 +93,88 @@ public class MailServiceImpl implements MailService {
                     + "<p style='font-size: 14px;'>Se hai domande o necessiti assistenza, non esitare a contattarci a <a href='mailto:phronesis_support@phronesis.com'>phronesis_support@phronesis.com</a>.</p>"
                     + "<p style='font-size: 14px;'>Grazie,</p>"
                     + "<p style='font-size: 14px;'>🌟 Il Team di Phronesis 🌟</p>"
+                    + "</div>"
+                    + "</div>"
+                    + "</body>"
+                    + "</html>";
+
+            helper.setText(emailContent, true);
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new EmailSendingException(user.getEmail());
+        } catch (UnsupportedEncodingException e) {
+            throw new UnsupportedEmailEncodingException(user.getEmail());
+        }
+    }
+
+    @Override
+    public void sendBannedEmail(User user, String reason) throws EmailSendingException, UnsupportedEmailEncodingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            helper.setFrom("phronesis_support@phronesis.com", "Phronesis");
+            helper.setSubject("Account Banned Notification");
+
+            String emailContent = "<html>"
+                    + "<head>"
+                    + "<style>"
+                    + "body { font-family: 'Tenor Sans', Arial, sans-serif; font-weight: 400; }"
+                    + ".email-container { padding: 20px; }"
+                    + "</style>"
+                    + "</head>"
+                    + "<body>"
+                    + "<div class='email-container'>"
+                    + "<div>"
+                    + "<p style='font-size: 18px;'>Hello <span style='color: blue;'><strong>"
+                    + user.getFirstName() + " " + user.getLastName()
+                    + "</strong></span>,</p>"
+                    + "<p style='font-size: 14px;'>We regret to inform you that your account on <strong>Phronesis</strong> has been banned due to the following reason:</p>"
+                    + "<p style='font-size: 14px; color: red;'><strong>" + reason + "</strong></p>"
+                    + "<p style='font-size: 14px;'>While banned, you will not be able to access your account or participate in any community activities. If you believe this ban is a mistake or would like to appeal, please contact our support team at <a href='mailto:phronesis_support@phronesis.com'>phronesis_support@phronesis.com</a>.</p>"
+                    + "<p style='font-size: 14px;'>Thank you for your understanding,</p>"
+                    + "<p style='font-size: 14px;'>🌟 The Phronesis Team 🌟</p>"
+                    + "</div>"
+                    + "</div>"
+                    + "</body>"
+                    + "</html>";
+
+            helper.setText(emailContent, true);
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new EmailSendingException(user.getEmail());
+        } catch (UnsupportedEncodingException e) {
+            throw new UnsupportedEmailEncodingException(user.getEmail());
+        }
+    }
+
+
+    @Override
+    public void sendUnbannedEmail(User user) throws EmailSendingException, UnsupportedEmailEncodingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            helper.setFrom("phronesis_support@phronesis.com", "Phronesis");
+            helper.setSubject("Account Unbanned Notification");
+
+            String emailContent = "<html>"
+                    + "<head>"
+                    + "<style>"
+                    + "body { font-family: 'Tenor Sans', Arial, sans-serif; font-weight: 400; }"
+                    + ".email-container { padding: 20px; }"
+                    + "</style>"
+                    + "</head>"
+                    + "<body>"
+                    + "<div class='email-container'>"
+                    + "<div>"
+                    + "<p style='font-size: 18px;'>Hello <span style='color: blue;'><strong>"
+                    + user.getFirstName() + " " + user.getLastName()
+                    + "</strong></span>,</p>"
+                    + "<p style='font-size: 14px;'>We are pleased to inform you that your account on <strong>Phronesis</strong> has been unbanned and you can now resume participating in our community.</p>"
+                    + "<p style='font-size: 14px;'>We value your contribution and hope you will continue to abide by our community guidelines. If you have any questions or need further assistance, please contact our support team at <a href='mailto:phronesis_support@phronesis.com'>phronesis_support@phronesis.com</a>.</p>"
+                    + "<p style='font-size: 14px;'>Welcome back!</p>"
+                    + "<p style='font-size: 14px;'>🌟 The Phronesis Team 🌟</p>"
                     + "</div>"
                     + "</div>"
                     + "</body>"
