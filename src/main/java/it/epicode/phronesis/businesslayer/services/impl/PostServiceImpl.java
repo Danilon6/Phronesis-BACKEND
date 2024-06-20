@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -122,6 +121,7 @@ public class PostServiceImpl implements PostService {
         //non si può modificare l'autore del post quindi non prevedo una conversione da id a User, in futuro potrei prevedere un DTO
         //diverso per la modifica
         var post = postRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
+
         BeanUtils.copyProperties(e, post);
 
         if (e.getImageFile()!= null && !e.getImageFile().isEmpty()) {

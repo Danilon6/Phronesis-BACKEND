@@ -42,7 +42,7 @@ public class PostController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PostResponseDTO> getPosts (@PathVariable Long id) {
+    public ResponseEntity<PostResponseDTO> getPostById (@PathVariable Long id) {
         var p = postService.getById(id);
         return new ResponseEntity<>(p, HttpStatus.FOUND);
     }

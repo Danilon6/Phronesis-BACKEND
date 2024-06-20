@@ -1,6 +1,7 @@
 package it.epicode.phronesis.businesslayer.services.impl.userPostInteraction;
 
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.FavoriteResponseDTO;
+import it.epicode.phronesis.businesslayer.dto.userPostInteraction.FavoriteResponsePrj;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponsePrj;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
@@ -13,7 +14,9 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+@Service
 public class FavoriteServiceImpl implements FavoriteService {
 
     @Autowired
@@ -28,7 +31,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Autowired
     Mapper<Favorite, FavoriteResponseDTO> mapFavoriteEntity2FavoriteResponseDTO;
     @Override
-    public Page<UserPostInteractionResponsePrj> getAllByUserId(Pageable p, Long id) {
+    public Page<FavoriteResponsePrj> getAllByUserId(Pageable p, Long id) {
         return favoriteRepository.findAllByUserId(p, id);
     }
 

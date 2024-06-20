@@ -7,7 +7,11 @@ import it.epicode.phronesis.businesslayer.services.interfaces.CRUDService;
 
 import java.util.List;
 
-public interface CommentService extends CRUDService<CommentResponseDTO, CommentRequestDTO, CommentResponsePrj> {
+public interface CommentService extends UserPostInteractionService<CommentResponseDTO, CommentRequestDTO> {
 
     List<CommentResponsePrj> getAllByPostId(Long id);
+
+    CommentResponseDTO getById(Long id);
+
+    CommentResponseDTO update(Long id, CommentRequestDTO e);
 }

@@ -43,15 +43,23 @@ public class UserController {
         return new ResponseEntity<>(allUsers, headers, HttpStatus.OK);
     }
 
+    @GetMapping("banned")
+    public ResponseEntity<Page<RegisteredUserPrj>> getAllBannedUsers (Pageable p) {
+        var allBannedUsers = userService.getAllBannedUsers(p);
+        var headers = new HttpHeaders();
+        headers.add("Totale", String.valueOf(allBannedUsers.getTotalElements()));
+        return new ResponseEntity<>(allBannedUsers, headers, HttpStatus.OK);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<RegisteredUserDTO> getUser (@PathVariable Long id) {
         var u = userService.getById(id);
-        return new ResponseEntity<>(u, HttpStatus.FOUND);
+        return new ResponseEntity<>(u, HttpStatus.OK);
     }
 
 
 
-    @GetMapping("/activate")
+    @PostMapping("/activate")
     public ResponseEntity<String> activateAccount(@RequestParam String token) {
         try {
             if (userService.activateUser(token)) {
@@ -65,20 +73,23 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<RegisteredUserDTO> register(@RequestBody @Validated RegisterUserModel model, BindingResult validator){
-        if (validator.hasErrors()) {
-            throw new ApiValidationException(validator.getAllErrors());
-        }
+    public ResponseEntity<RegisteredUserDTO> register(@RequestParam("firstName") String firstName,
+                                                      @RequestParam("lastName") String lastName,
+                                                      @RequestParam("username") String username,
+                                                      @RequestParam("email") String email,
+                                                      @RequestParam("password") String password,
+                                                      @RequestParam("bio") String bio,
+                                                      @RequestParam("profilePictureFile") MultipartFile profilePictureFile) {
 
         var registeredUser = userService.register(
                 RegisterUserDTO.builder()
-                        .withFirstName(model.firstName())
-                        .withLastName(model.lastName())
-                        .withUsername(model.username())
-                        .withEmail(model.email())
-                        .withBio(model.bio())
-                        .withProfilePicture(model.profilePicture())
-                        .withPassword(model.password())
+                        .withFirstName(firstName)
+                        .withLastName(lastName)
+                        .withUsername(username)
+                        .withEmail(email)
+                        .withBio(bio)
+                        .withProfilePictureFile(profilePictureFile)
+                        .withPassword(password)
                 .build());
 
         return  new ResponseEntity<> (registeredUser, HttpStatus.OK);
@@ -110,19 +121,22 @@ public class UserController {
     @PutMapping("{id}")
     public ResponseEntity<RegisteredUserDTO> updateUser (
             @PathVariable Long id,
-            @RequestBody @Validated RegisterUserModel model, BindingResult validator
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
+            @RequestParam("username") String username,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("bio") String bio,
+            @RequestParam("profilePictureFile") MultipartFile profilePictureFile
     ){
-        if (validator.hasErrors()) {
-            throw  new ApiValidationException(validator.getAllErrors());
-        }
         var u = userService.update(id, RegisterUserDTO.builder()
-                        .withFirstName(model.firstName())
-                        .withLastName(model.lastName())
-                        .withUsername(model.username())
-                        .withEmail(model.email())
-                        .withPassword(model.password())
-                        .withBio(model.bio())
-                        .withProfilePicture(model.profilePicture())
+                .withFirstName(firstName)
+                .withLastName(lastName)
+                .withUsername(username)
+                .withEmail(email)
+                .withBio(bio)
+                .withProfilePictureFile(profilePictureFile)
+                .withPassword(password)
                 .build());
         return new ResponseEntity<>(u, HttpStatus.OK);
     }
@@ -162,6 +176,21 @@ public class UserController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PutMapping("/{id}/ban")
+    public ResponseEntity<String> banUser(
+            @PathVariable Long id,
+            @RequestParam String reason) throws UnsupportedEmailEncodingException, EmailSendingException {
+        userService.banUser(id, reason);
+        return ResponseEntity.ok("User banned successfully.");
+    }
+
+    @PutMapping("/{id}/unban")
+    public ResponseEntity<String> unbanUser(
+            @PathVariable Long id) throws UnsupportedEmailEncodingException, EmailSendingException {
+        userService.unbanUser(id);
+        return ResponseEntity.ok("User unbanned successfully.");
     }
 
 

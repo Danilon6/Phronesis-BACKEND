@@ -51,8 +51,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
         var user = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         var urlExistingImage = user.getProfilePicture();
-        var serverUrls = new String[]{"link1", "link2"};
-        if (urlExistingImage != null && !isStringInList(urlExistingImage, serverUrls)) {
+
+        if (urlExistingImage != null) {
             var publicId = extractPublicIdFromUrl(urlExistingImage);
             deleteImage(publicId);
         }

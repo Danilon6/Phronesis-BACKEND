@@ -102,7 +102,6 @@ public class BeansConfiguration {
 				.withEmail(input.getEmail())
 				.withPassword(input.getPassword())
 				.withBio(input.getBio())
-				.withProfilePicture(input.getProfilePicture())
 				.build();
 	}
 

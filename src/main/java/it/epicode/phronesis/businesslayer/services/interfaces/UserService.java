@@ -22,6 +22,8 @@ public interface UserService {
 
     Page<RegisteredUserPrj> getAll(Pageable p);
 
+    Page<RegisteredUserPrj> getAllBannedUsers(Pageable p);
+
     RegisteredUserDTO update(long id, RegisterUserDTO user);
 
     RegisteredUserDTO delete(Long id);

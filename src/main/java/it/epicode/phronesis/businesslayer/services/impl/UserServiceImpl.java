@@ -13,6 +13,7 @@ import it.epicode.phronesis.businesslayer.services.interfaces.UserService;
 import it.epicode.phronesis.businesslayer.services.interfaces.email.MailService;
 import it.epicode.phronesis.businesslayer.security.ApplicationUserDetailsService;
 import it.epicode.phronesis.businesslayer.services.interfaces.image.CloudinaryService;
+import it.epicode.phronesis.businesslayer.services.interfaces.image.ImageService;
 import it.epicode.phronesis.config.JwtUtils;
 import it.epicode.phronesis.datalayer.entities.Roles;
 import it.epicode.phronesis.datalayer.entities.User;
@@ -25,10 +26,7 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.Duplicat
 import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.DuplicateUsernameException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.EmailSendingException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.UnsupportedEmailEncodingException;
-import it.epicode.phronesis.presentationlayer.api.exceptions.user.InvalidLoginException;
-import it.epicode.phronesis.presentationlayer.api.exceptions.user.UserActivationException;
-import it.epicode.phronesis.presentationlayer.api.exceptions.user.UserIsAlreadyEnabledException;
-import it.epicode.phronesis.presentationlayer.api.exceptions.user.UserNotEnabledException;
+import it.epicode.phronesis.presentationlayer.api.exceptions.user.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import io.jsonwebtoken.*;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -93,7 +90,7 @@ public class UserServiceImpl implements UserService {
     MailService mailService;
 
     @Autowired
-    CloudinaryService cloudinaryService;
+    ImageService cloudinaryService;
 
     @Override
     public RegisteredUserDTO register(RegisterUserDTO newUser) {
@@ -106,7 +103,15 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateUsernameException(newUser.getUsername());
         } else {
             try {
+
                 var userEntity = mapEntity.map(newUser);
+
+                if (newUser.getProfilePictureFile() != null && !newUser.getProfilePictureFile().isEmpty()) {
+                    // Carica l'immagine su Cloudinary
+                    var url = (String) cloudinary.uploader().upload(newUser.getProfilePictureFile().getBytes(), ObjectUtils.emptyMap()).get("url");
+                    userEntity.setProfilePicture(url);
+                }
+
                 var p = encoder.encode(newUser.getPassword());
                 log.info("Password encrypted: {}", p);
                 userEntity.setPassword(p);
@@ -153,7 +158,7 @@ public class UserServiceImpl implements UserService {
                     usersRepository.save(user);
                     return true;
                 }
-                throw new UserIsAlreadyEnabledException(user.getUsername(), "User is already enabled");
+                throw new UserIsAlreadyEnabledException(user.getUsername());
             }
             return false;
         }catch (ExpiredJwtException e) {
@@ -231,6 +236,12 @@ public class UserServiceImpl implements UserService {
         } else {
             try {
                 BeanUtils.copyProperties(user, u);
+
+                if (user.getProfilePictureFile() != null && !user.getProfilePictureFile().isEmpty()) {
+                    // Carica l'immagine su Cloudinary
+                    var url = (String) cloudinary.uploader().upload(user.getProfilePictureFile().getBytes(), ObjectUtils.emptyMap()).get("url");
+                    u.setProfilePicture(url);
+                }
                 return mapRegisteredUser.map(usersRepository.save(u));
             }catch (Exception ex) {
                 throw new RuntimeException("Exception in updating user");
@@ -315,6 +326,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void banUser(Long id, String reason) throws UnsupportedEmailEncodingException, EmailSendingException {
         var user = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
+
+        if (user.isBanned()) {
+            throw new UserAlreadyBannedException(user.getUsername());
+        }
             user.setBanned(true);
             usersRepository.save(user);
             mailService.sendBannedEmail(user, reason);
@@ -323,8 +338,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void unbanUser(Long id) throws UnsupportedEmailEncodingException, EmailSendingException {
         var user = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
+        if (!user.isBanned()) {
+            throw new UserAlreadyUnbannedException(user.getUsername());
+        }
             user.setBanned(false);
             usersRepository.save(user);
             mailService.sendUnbannedEmail(user);
+    }
+
+    public Page<RegisteredUserPrj> getAllBannedUsers(Pageable p){
+        return usersRepository.findAllByBanned(true, p);
     }
 }

@@ -16,4 +16,6 @@ public interface UsersRepository extends JpaRepository<User, Long> {
 	Optional<User> findOneByUsername(String username);
 	List<User> findByRoles_RoleType(String role);
 	Page<RegisteredUserPrj> findAllBy(Pageable pageable);
+	Page<RegisteredUserPrj> findAllByBanned(boolean banned, Pageable pageable);
+
 }

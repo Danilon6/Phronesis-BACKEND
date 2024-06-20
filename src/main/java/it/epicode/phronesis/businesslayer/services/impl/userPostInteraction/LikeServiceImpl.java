@@ -11,9 +11,11 @@ import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositori
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class LikeServiceImpl implements LikeService {
 
     @Autowired
@@ -31,11 +33,6 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public List<UserPostInteractionResponsePrj> getAllByPostId(Long id) {
         return likeRepository.findByPostId(id);
-    }
-
-    @Override
-    public List<UserPostInteractionResponsePrj> getAllByUserId(Long id) {
-        return likeRepository.findByUserId(id);
     }
 
     @Override

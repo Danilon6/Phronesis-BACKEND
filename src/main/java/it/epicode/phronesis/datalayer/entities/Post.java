@@ -6,6 +6,7 @@ import it.epicode.phronesis.datalayer.entities.userPostInteraction.Like;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -32,11 +33,11 @@ public class Post extends BaseEntity{
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @ToString.Exclude
-    private List<Comment> comments;
+    private LinkedList<Comment> comments;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @ToString.Exclude
-    private List<Like> likes;
+    private LinkedList<Like> likes;
 
 }

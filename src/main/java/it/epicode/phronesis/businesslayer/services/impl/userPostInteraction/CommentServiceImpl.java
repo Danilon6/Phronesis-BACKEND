@@ -12,12 +12,11 @@ import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
+@Service
 public class CommentServiceImpl implements CommentService {
 
     @Autowired
@@ -38,11 +37,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Page<CommentResponsePrj> getAll(Pageable p) {
-        return commentRepository.findAllBy(p);
-    }
-
-    @Override
     public CommentResponseDTO getById(Long id) {
         var comment = commentRepository.findById(id).orElseThrow(()->new NotFoundException(id));
 
@@ -50,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentResponseDTO save(CommentRequestDTO e) throws IOException {
+    public CommentResponseDTO save(CommentRequestDTO e) {
         var user = usersRepository.findById(e.getUserId()).orElseThrow(()-> new NotFoundException(e.getUserId()));
         var post = postRepository.findById(e.getPostId()).orElseThrow(()-> new NotFoundException(e.getPostId()));
         var comment = Comment.builder()
@@ -63,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentResponseDTO update(Long id, CommentRequestDTO e) throws IOException {
+    public CommentResponseDTO update(Long id, CommentRequestDTO e){
         var comment = commentRepository.findById(id).orElseThrow(()->new NotFoundException(id));
         //l'update di un comment riguarda solo il content ovviamente. Potrei fare una request a parte ma per ora sfrutto questa
         BeanUtils.copyProperties(e, comment);

@@ -6,7 +6,6 @@ import it.epicode.phronesis.businesslayer.dto.report.UserReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.report.UserReportResponsePrj;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
 import it.epicode.phronesis.businesslayer.services.interfaces.report.UserReportService;
-import it.epicode.phronesis.datalayer.entities.report.PostReport;
 import it.epicode.phronesis.datalayer.entities.report.UserReport;
 import it.epicode.phronesis.datalayer.repositories.PostRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
@@ -15,7 +14,9 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserReportServiceImpl implements UserReportService {
 
     @Autowired

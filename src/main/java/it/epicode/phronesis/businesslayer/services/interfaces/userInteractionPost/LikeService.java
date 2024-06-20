@@ -9,5 +9,4 @@ import java.util.List;
 public interface LikeService extends UserPostInteractionService<UserPostInteractionResponseDTO, UserPostInteractionRequestDTO> {
 
      List<UserPostInteractionResponsePrj> getAllByPostId(Long id);
-     List<UserPostInteractionResponsePrj> getAllByUserId(Long id);
 }
