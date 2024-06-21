@@ -226,8 +226,8 @@ public class UserServiceImpl implements UserService {
         return usersRepository.findAllBy(p);
     }
 
-    //Nel frontend potrei fornire all utente solo un modulo epr cmabaire i dati tranne l'immagine
-    //per cambaire l'immagine lo amndiamo ad un altro modulo con endpoint diverso
+    //Nel frontend potrei fornire all utente solo un modulo epr cambiare i dati tranne l'immagine
+    //per cambiare l'immagine lo mandiamo ad un altro modulo con endpoint diverso
     @Override
     public RegisteredUserDTO update(long id, UpdateUserDTO user) {
         var u = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
@@ -244,6 +244,7 @@ public class UserServiceImpl implements UserService {
                 BeanUtils.copyProperties(user, u);
 
                 return mapRegisteredUser.map(usersRepository.save(u));
+
             }catch (Exception ex) {
                 throw new RuntimeException("Exception in updating user");
             }
