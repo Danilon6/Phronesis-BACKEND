@@ -12,13 +12,11 @@ import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
 import it.epicode.phronesis.businesslayer.services.interfaces.UserService;
 import it.epicode.phronesis.businesslayer.services.interfaces.email.MailService;
 import it.epicode.phronesis.businesslayer.security.ApplicationUserDetailsService;
-import it.epicode.phronesis.businesslayer.services.interfaces.image.CloudinaryService;
 import it.epicode.phronesis.businesslayer.services.interfaces.image.ImageService;
 import it.epicode.phronesis.config.JwtUtils;
 import it.epicode.phronesis.datalayer.entities.Roles;
 import it.epicode.phronesis.datalayer.entities.User;
 import it.epicode.phronesis.datalayer.entities.enums.JwtType;
-import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
 import it.epicode.phronesis.datalayer.repositories.RolesRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
@@ -27,9 +25,11 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.Duplicat
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.EmailSendingException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.UnsupportedEmailEncodingException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.*;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,6 +39,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -48,6 +49,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@Validated
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -87,13 +89,18 @@ public class UserServiceImpl implements UserService {
     Cloudinary cloudinary;
 
     @Autowired
-    MailService mailService;
-
-    @Autowired
     ImageService cloudinaryService;
 
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxFileSize;
+
+    @Autowired
+    MailService mailService;
+
+
+
     @Override
-    public RegisteredUserDTO register(RegisterUserDTO newUser) {
+    public RegisteredUserDTO register(@Valid RegisterUserDTO newUser) {
         var emailDuplicated = usersRepository.findByEmail(newUser.getEmail());
         var usernameDuplicated = usersRepository.findOneByUsername(newUser.getUsername());
 
@@ -106,11 +113,10 @@ public class UserServiceImpl implements UserService {
 
                 var userEntity = mapEntity.map(newUser);
 
-                if (newUser.getProfilePictureFile() != null && !newUser.getProfilePictureFile().isEmpty()) {
+                cloudinaryService.verifyMaxSizeOfFile(newUser.getProfilePictureFile());
                     // Carica l'immagine su Cloudinary
                     var url = (String) cloudinary.uploader().upload(newUser.getProfilePictureFile().getBytes(), ObjectUtils.emptyMap()).get("url");
                     userEntity.setProfilePicture(url);
-                }
 
                 var p = encoder.encode(newUser.getPassword());
                 log.info("Password encrypted: {}", p);
@@ -223,7 +229,7 @@ public class UserServiceImpl implements UserService {
     //Nel frontend potrei fornire all utente solo un modulo epr cmabaire i dati tranne l'immagine
     //per cambaire l'immagine lo amndiamo ad un altro modulo con endpoint diverso
     @Override
-    public RegisteredUserDTO update(long id, RegisterUserDTO user) {
+    public RegisteredUserDTO update(long id, UpdateUserDTO user) {
         var u = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         var usernameDuplicated = usersRepository.findOneByUsername(user.getUsername());
         var emailDuplicated = usersRepository.findByEmail(user.getEmail());
@@ -237,11 +243,6 @@ public class UserServiceImpl implements UserService {
             try {
                 BeanUtils.copyProperties(user, u);
 
-                if (user.getProfilePictureFile() != null && !user.getProfilePictureFile().isEmpty()) {
-                    // Carica l'immagine su Cloudinary
-                    var url = (String) cloudinary.uploader().upload(user.getProfilePictureFile().getBytes(), ObjectUtils.emptyMap()).get("url");
-                    u.setProfilePicture(url);
-                }
                 return mapRegisteredUser.map(usersRepository.save(u));
             }catch (Exception ex) {
                 throw new RuntimeException("Exception in updating user");
@@ -254,6 +255,11 @@ public class UserServiceImpl implements UserService {
     public RegisteredUserDTO delete(Long id) {
         try {
             var u = usersRepository.findById(id).orElseThrow();
+            //estraggo il publicId per l'eliminazione dell'imamgine che era associata all'utente
+            var publicID = cloudinaryService.extractPublicIdFromUrl(u.getProfilePicture());
+            //elimino l'immagine
+            cloudinaryService.deleteImage(publicID);
+            //elimino l'utente
             usersRepository.delete(u);
             return mapRegisteredUser.map(u);
         } catch (NoSuchElementException e) {

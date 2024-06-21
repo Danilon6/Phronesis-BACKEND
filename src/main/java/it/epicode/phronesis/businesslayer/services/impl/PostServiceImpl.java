@@ -1,7 +1,6 @@
 package it.epicode.phronesis.businesslayer.services.impl;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import it.epicode.phronesis.businesslayer.dto.UserResponsePartialDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostResponseDTO;
@@ -100,18 +99,12 @@ public class PostServiceImpl implements PostService {
         //setto lo user
         postEntity.setUser(user);
 
-        //verifico se nella request è stata fornita una immagine di conseguenza la salvo su cloudinary e la setto come imageUrl
-        if (e.getImageFile()!= null && !e.getImageFile().isEmpty()) {
-            var file = e.getImageFile();
-            var url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
-            postEntity.setImageUrl(url);
-        }
-
         //salvo l'entità
         var postSaved = postRepository.save(postEntity);
 
         //converto il post appena salvato in una response
         //i like e i commenti saranno automaticamente null
+
         return mapPost2PostResponseDTO.map(postSaved);
 
     }
@@ -123,12 +116,6 @@ public class PostServiceImpl implements PostService {
         var post = postRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
 
         BeanUtils.copyProperties(e, post);
-
-        if (e.getImageFile()!= null && !e.getImageFile().isEmpty()) {
-            var file = e.getImageFile();
-            var url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
-            post.setImageUrl(url);
-        }
 
         return mapPost2PostResponseDTO.map(postRepository.save(post));
 

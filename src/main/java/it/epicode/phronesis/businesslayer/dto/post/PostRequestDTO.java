@@ -16,8 +16,6 @@ public class PostRequestDTO extends BaseDTO {
 
     private String content;
 
-    private MultipartFile imageFile;
-
     private Long userId;
 
 }

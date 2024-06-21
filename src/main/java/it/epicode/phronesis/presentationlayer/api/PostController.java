@@ -11,6 +11,8 @@ import it.epicode.phronesis.datalayer.repositories.PostRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.ApiValidationException;
 import it.epicode.phronesis.presentationlayer.api.models.PostRequestModel;
 import it.epicode.phronesis.presentationlayer.api.models.RegisterUserModel;
+import it.epicode.phronesis.presentationlayer.api.models.userInteractionPost.CommentRequestModel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +22,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @RestController
 @RequestMapping("api/post")
+@Slf4j
 public class PostController {
 
     @Autowired
@@ -44,11 +48,14 @@ public class PostController {
     @GetMapping("{id}")
     public ResponseEntity<PostResponseDTO> getPostById (@PathVariable Long id) {
         var p = postService.getById(id);
+        log.info("sono nella getById del post");
+        System.out.println(p);
         return new ResponseEntity<>(p, HttpStatus.FOUND);
     }
 
     @PostMapping
-    public ResponseEntity<PostResponseDTO> addNewPost(@RequestBody @Validated PostRequestModel model, BindingResult validator) throws IOException {
+    public ResponseEntity<PostResponseDTO> addNewPost(
+            @RequestBody @Validated PostRequestModel model, BindingResult validator) throws IOException {
         if (validator.hasErrors()) {
             throw new ApiValidationException(validator.getAllErrors());
         }
@@ -57,14 +64,28 @@ public class PostController {
                 PostRequestDTO.builder()
                         .withTitle(model.title())
                         .withContent(model.content())
-                        .withImageFile(model.imageFile())
                         .withUserId(model.userId())
                         .build());
         return  new ResponseEntity<> (postResponseDTO, HttpStatus.OK);
     }
 
 
-    //manca la put
+    @PutMapping("{id}")
+    public ResponseEntity<PostResponseDTO> updateUser (
+            @PathVariable Long id, @RequestBody @Validated PostRequestModel model, BindingResult validator) throws IOException {
+        if (validator.hasErrors()) {
+            throw new ApiValidationException(validator.getAllErrors());
+        }
+
+        var postResponseDTO = postService.update( id,
+                PostRequestDTO.builder()
+                        .withTitle(model.title())
+                        .withContent(model.content())
+                        .withUserId(model.userId())
+                        .build());
+        return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
+    }
+    
     @DeleteMapping("{id}")
     public ResponseEntity<PostResponseDTO> deleteUser (
             @PathVariable Long id

@@ -12,5 +12,11 @@ public interface UserPostInteractionResponsePrj {
 
     LocalDateTime getUpdatedAt();
 
-    UserResponsePartialDTO getUser();
+    User getUser();
+
+    interface User {
+        Long getId();
+        String getUsername();
+        String getProfilePicture();
+    }
 }

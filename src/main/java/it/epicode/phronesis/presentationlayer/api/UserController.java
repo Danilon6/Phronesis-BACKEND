@@ -11,6 +11,8 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.EmailS
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.UnsupportedEmailEncodingException;
 import it.epicode.phronesis.presentationlayer.api.models.LoginModel;
 import it.epicode.phronesis.presentationlayer.api.models.RegisterUserModel;
+import it.epicode.phronesis.presentationlayer.api.models.UpdateUserModel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +29,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("api/user")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -121,22 +124,16 @@ public class UserController {
     @PutMapping("{id}")
     public ResponseEntity<RegisteredUserDTO> updateUser (
             @PathVariable Long id,
-            @RequestParam("firstName") String firstName,
-            @RequestParam("lastName") String lastName,
-            @RequestParam("username") String username,
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam("bio") String bio,
-            @RequestParam("profilePictureFile") MultipartFile profilePictureFile
-    ){
-        var u = userService.update(id, RegisterUserDTO.builder()
-                .withFirstName(firstName)
-                .withLastName(lastName)
-                .withUsername(username)
-                .withEmail(email)
-                .withBio(bio)
-                .withProfilePictureFile(profilePictureFile)
-                .withPassword(password)
+            @RequestBody @Validated UpdateUserModel model, BindingResult validator){
+        if (validator.hasErrors()) {
+            throw  new ApiValidationException(validator.getAllErrors());
+        }
+        var u = userService.update(id, UpdateUserDTO.builder()
+                .withFirstName(model.firstName())
+                .withLastName(model.lastName())
+                .withUsername(model.username())
+                .withEmail(model.email())
+                .withBio(model.bio())
                 .build());
         return new ResponseEntity<>(u, HttpStatus.OK);
     }
@@ -169,8 +166,8 @@ public class UserController {
         return new ResponseEntity<>(e, HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/avatar")
-    public UserResponsePartialDTO updateProfilePicture(@RequestParam("avatar") MultipartFile file, @PathVariable Long id) {
+    @PatchMapping("/{id}/profile-picture")
+    public UserResponsePartialDTO updateProfilePicture(@RequestParam("profilePicture") MultipartFile file, @PathVariable Long id) {
         try {
             return userService.updateProfilePicture(id, file);
         } catch (IOException e) {
@@ -179,6 +176,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/ban")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> banUser(
             @PathVariable Long id,
             @RequestParam String reason) throws UnsupportedEmailEncodingException, EmailSendingException {
@@ -187,6 +185,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/unban")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> unbanUser(
             @PathVariable Long id) throws UnsupportedEmailEncodingException, EmailSendingException {
         userService.unbanUser(id);

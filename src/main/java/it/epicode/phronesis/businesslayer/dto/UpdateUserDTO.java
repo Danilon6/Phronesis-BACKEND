@@ -2,19 +2,17 @@ package it.epicode.phronesis.businesslayer.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @Builder(setterPrefix = "with")
-public class RegisterUserDTO extends BaseDTO {
+public class UpdateUserDTO extends BaseDTO{
     @NotBlank(message = "Il tuo nome non può essere vuoto")
     private String firstName;
 
@@ -27,13 +25,6 @@ public class RegisterUserDTO extends BaseDTO {
 
     @Email(message = "Inserisci una email valida")
     private String email;
-
-    @NotBlank(message = "La password non può contenere solo spazi vuoti")
-    @Size(max = 125, message ="La password è troppo lunga max 20 caratteri")
-    private String password;
-
-    @NotNull(message = "Devi caricare una foto profilo")
-    private MultipartFile profilePictureFile;
 
     @NotBlank(message = "Inserisci una breve descrizione di te")
     private String bio;

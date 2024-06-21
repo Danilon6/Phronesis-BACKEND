@@ -47,16 +47,9 @@ public class CommentController {
     }
 
 
-    @PutMapping("{id}")
-    public ResponseEntity<CommentResponseDTO> update (@PathVariable Long id, @RequestBody @Validated CommentRequestModel model, BindingResult validator) {
-        if (validator.hasErrors()) {
-            throw new ApiValidationException(validator.getAllErrors());
-        }
-        var comment = commentService.update(id, CommentRequestDTO.commentRequestBuilder()
-                        .withUserId(model.userId())
-                        .withPostId(model.postId())
-                        .withContent(model.content())
-                        .build());
+    @PatchMapping("{id}")
+    public ResponseEntity<CommentResponseDTO> update (@PathVariable Long id, @RequestParam("content") String content) {
+        var comment = commentService.update(id, content);
 
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }

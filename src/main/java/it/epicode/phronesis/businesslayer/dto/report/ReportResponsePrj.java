@@ -14,7 +14,13 @@ public interface ReportResponsePrj extends BaseProjection {
 
     LocalDateTime getUpdatedAt();
 
-    UserResponsePartialDTO getReportedBy();
+    User getReportedBy();
+
+    interface User {
+        Long getId();
+        String getUsername();
+        String getProfilePicture();
+    }
 
     String getReason();
 }

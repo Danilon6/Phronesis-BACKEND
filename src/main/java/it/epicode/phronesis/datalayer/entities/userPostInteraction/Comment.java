@@ -19,4 +19,7 @@ public class Comment extends UserPostInteraction{
         super(user, post);
         this.content = content;
     }
+
+    public Comment() {
+    }
 }

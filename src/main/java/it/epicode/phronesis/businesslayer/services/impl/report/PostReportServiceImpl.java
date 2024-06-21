@@ -33,7 +33,7 @@ public class PostReportServiceImpl implements PostReportService {
     //Questa getAll la uso lato user per recuperare solo le segnalazioni fatte dall'utente loggato
     @Override
     public Page<PostReportResponsePrj> getAllByUserId(Long id, Pageable p) {
-        return postReportRepository.findAllByReportedBy(id, p);
+        return postReportRepository.findAllByReportedById(id, p);
     }
 
     //Questa getAll la uso lato admin per recuperare tutte le segnalazioni fatte

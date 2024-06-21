@@ -28,8 +28,6 @@ public class PostResponseDTO extends BaseDTO {
 
     private String content;
 
-    private String imageUrl;
-
     private UserResponsePartialDTO user;
 
     private List<CommentResponsePrj> comments;

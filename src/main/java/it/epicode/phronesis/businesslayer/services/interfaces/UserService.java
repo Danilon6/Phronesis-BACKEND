@@ -5,6 +5,7 @@ import it.epicode.phronesis.businesslayer.dto.*;
 import it.epicode.phronesis.datalayer.entities.User;
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.EmailSendingException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.UnsupportedEmailEncodingException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    RegisteredUserDTO register(RegisterUserDTO user);
+    RegisteredUserDTO register(@Valid RegisterUserDTO user);
 
     Optional<LoginResponseDTO> login(String username, String password);
 
@@ -24,7 +25,7 @@ public interface UserService {
 
     Page<RegisteredUserPrj> getAllBannedUsers(Pageable p);
 
-    RegisteredUserDTO update(long id, RegisterUserDTO user);
+    RegisteredUserDTO update(long id, UpdateUserDTO user);
 
     RegisteredUserDTO delete(Long id);
 

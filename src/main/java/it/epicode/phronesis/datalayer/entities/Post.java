@@ -24,8 +24,6 @@ public class Post extends BaseEntity{
     @Column(nullable = false, length = 500)
     private String content;
 
-    private String imageUrl;
-
     @ManyToOne
     private User user;
 
@@ -33,11 +31,11 @@ public class Post extends BaseEntity{
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @ToString.Exclude
-    private LinkedList<Comment> comments;
+    private List<Comment> comments;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @ToString.Exclude
-    private LinkedList<Like> likes;
+    private List<Like> likes;
 
 }

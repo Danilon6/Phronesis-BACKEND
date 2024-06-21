@@ -44,7 +44,8 @@ public class FavoriteServiceImpl implements FavoriteService {
                 .withPost(post)
                 .build();
 
-        return mapFavoriteEntity2FavoriteResponseDTO.map(favorite);
+        var favoriteSaved = favoriteRepository.save(favorite);
+        return mapFavoriteEntity2FavoriteResponseDTO.map(favoriteSaved);
     }
 
     @Override

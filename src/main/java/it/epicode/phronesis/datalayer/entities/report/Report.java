@@ -8,7 +8,7 @@ import lombok.*;
 @Entity
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED) //scelgo joined e non singletabel perche essendo che ci sraanno ndei vlaori null nella riga questo violerebbe il nulable false
 @DiscriminatorColumn(name = "report_type", discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor
 @AllArgsConstructor

@@ -43,8 +43,9 @@ public class LikeServiceImpl implements LikeService {
                 .withUser(user)
                 .withPost(post)
                 .build();
-
-        return mapLikeEntity2UserPostInteractionResponseDTO.map(likeRepository.save(like));
+        var likeSaved = likeRepository.save(like);
+        post.getLikes().add(likeSaved);
+        return mapLikeEntity2UserPostInteractionResponseDTO.map(likeRepository.save(likeSaved));
     }
 
     @Override

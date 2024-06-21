@@ -195,7 +195,6 @@ public class BeansConfiguration {
 				.withUpdatedAt(input.getUpdatedAt())
 				.withTitle(input.getTitle())
 				.withContent(input.getContent())
-				.withImageUrl(input.getImageUrl())
 				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser()))
 				.build();
 	}

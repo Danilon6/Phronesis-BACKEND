@@ -14,7 +14,13 @@ public interface CommentResponsePrj extends BaseProjection {
 
     LocalDateTime getUpdatedAt();
 
-    UserResponsePartialDTO getUser();
+    User getUser();
+
+    interface User {
+        Long getId();
+        String getUsername();
+        String getProfilePicture();
+    }
 
     String getContent();
 }

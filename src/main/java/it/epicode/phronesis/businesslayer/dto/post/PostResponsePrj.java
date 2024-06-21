@@ -15,7 +15,5 @@ public interface PostResponsePrj extends BaseProjection {
 
     String getContent();
 
-    String getImageUrl();
-
     Long getUserId();
 }

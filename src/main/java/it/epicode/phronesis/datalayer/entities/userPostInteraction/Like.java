@@ -10,7 +10,6 @@ import lombok.*;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 @DiscriminatorValue("L")
 public class Like extends UserPostInteraction{
 
@@ -19,4 +18,6 @@ public class Like extends UserPostInteraction{
         super(user, post);
     }
 
+    public Like() {
+    }
 }

@@ -1,6 +1,5 @@
 package it.epicode.phronesis.businesslayer.services.impl.report;
 
-import it.epicode.phronesis.businesslayer.dto.report.PostReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.report.UserReportRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.report.UserReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.report.UserReportResponsePrj;
@@ -36,7 +35,7 @@ public class UserReportServiceImpl implements UserReportService {
     //Questa getAll la uso lato user per recuperare solo le segnalazioni fatte dall'utente loggato
     @Override
     public Page<UserReportResponsePrj> getAllByUserId(Long id, Pageable p) {
-        return userReportRepository.findAllByReportedBy(id, p);
+        return userReportRepository.findAllByReportedById(id, p);
     }
 
     //Questa getAll la uso lato admin per recuperare tutte le segnalazioni fatte

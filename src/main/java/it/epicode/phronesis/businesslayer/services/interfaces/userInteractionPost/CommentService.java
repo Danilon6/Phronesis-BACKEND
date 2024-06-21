@@ -13,5 +13,5 @@ public interface CommentService extends UserPostInteractionService<CommentRespon
 
     CommentResponseDTO getById(Long id);
 
-    CommentResponseDTO update(Long id, CommentRequestDTO e);
+    CommentResponseDTO update(Long id, String content);
 }

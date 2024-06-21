@@ -53,14 +53,15 @@ public class CommentServiceImpl implements CommentService {
                 .withContent(e.getContent())
                 .build();
 
-        return mapCommentEntityToCommentResponseDTO.map(comment);
+        var commentSaved = commentRepository.save(comment);
+        post.getComments().add(commentSaved);
+        return mapCommentEntityToCommentResponseDTO.map(commentSaved);
     }
 
     @Override
-    public CommentResponseDTO update(Long id, CommentRequestDTO e){
+    public CommentResponseDTO update(Long id, String content){
         var comment = commentRepository.findById(id).orElseThrow(()->new NotFoundException(id));
-        //l'update di un comment riguarda solo il content ovviamente. Potrei fare una request a parte ma per ora sfrutto questa
-        BeanUtils.copyProperties(e, comment);
+        comment.setContent(content);
          return mapCommentEntityToCommentResponseDTO.map(commentRepository.save(comment));
 
 

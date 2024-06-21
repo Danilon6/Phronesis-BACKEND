@@ -18,7 +18,7 @@ public abstract class UserPostInteraction extends BaseEntity {
 
     @ManyToOne
     private User user;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private Post post;
 }

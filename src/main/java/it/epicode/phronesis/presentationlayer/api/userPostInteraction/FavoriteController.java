@@ -25,7 +25,7 @@ public class FavoriteController {
 
 
     @GetMapping("user/{id}")
-    public ResponseEntity<Page<FavoriteResponsePrj>> getAllLikesByUserId (@PathVariable Long id, Pageable p) {
+    public ResponseEntity<Page<FavoriteResponsePrj>> getAllFavoritesByUserId (@PathVariable Long id, Pageable p) {
         var favorites = favoriteService.getAllByUserId(p, id);
         return new ResponseEntity<>(favorites, HttpStatus.OK);
     }
@@ -46,8 +46,8 @@ public class FavoriteController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<FavoriteResponseDTO> removeLike(@PathVariable Long id) {
-        var deletedLike = favoriteService.delete(id);
-        return new ResponseEntity<>(deletedLike, HttpStatus.OK);
+    public ResponseEntity<FavoriteResponseDTO> removeFavorites(@PathVariable Long id) {
+        var deletedFavorite = favoriteService.delete(id);
+        return new ResponseEntity<>(deletedFavorite, HttpStatus.OK);
     }
 }
