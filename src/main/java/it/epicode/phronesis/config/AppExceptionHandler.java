@@ -6,7 +6,7 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.DuplicateKeyException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.UserActivationException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.UserException;
-import it.epicode.phronesis.presentationlayer.api.exceptions.user.UserIsAlreadyEnabledException;
+import it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled.UserIsAlreadyEnabledException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

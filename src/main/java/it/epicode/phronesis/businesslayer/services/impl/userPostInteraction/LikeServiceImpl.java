@@ -28,7 +28,7 @@ public class LikeServiceImpl implements LikeService {
     PostRepository postRepository;
 
     @Autowired
-    Mapper<Like, UserPostInteractionResponseDTO> mapLikeEntity2UserPostInteractionResponseDTO;
+    Mapper<Like, UserPostInteractionResponseDTO> mapLikeEntityToUserPostInteractionResponseDTO;
 
     @Override
     public List<UserPostInteractionResponsePrj> getAllByPostId(Long id) {
@@ -45,13 +45,13 @@ public class LikeServiceImpl implements LikeService {
                 .build();
         var likeSaved = likeRepository.save(like);
         post.getLikes().add(likeSaved);
-        return mapLikeEntity2UserPostInteractionResponseDTO.map(likeRepository.save(likeSaved));
+        return mapLikeEntityToUserPostInteractionResponseDTO.map(likeRepository.save(likeSaved));
     }
 
     @Override
     public UserPostInteractionResponseDTO delete(Long id) {
         var like = likeRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         likeRepository.delete(like);
-        return mapLikeEntity2UserPostInteractionResponseDTO.map(like);
+        return mapLikeEntityToUserPostInteractionResponseDTO.map(like);
     }
 }

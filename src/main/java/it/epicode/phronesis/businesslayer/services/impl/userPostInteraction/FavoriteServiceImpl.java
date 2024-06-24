@@ -29,7 +29,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     PostRepository postRepository;
 
     @Autowired
-    Mapper<Favorite, FavoriteResponseDTO> mapFavoriteEntity2FavoriteResponseDTO;
+    Mapper<Favorite, FavoriteResponseDTO> mapFavoriteEntityToFavoriteResponseDTO;
     @Override
     public Page<FavoriteResponsePrj> getAllByUserId(Pageable p, Long id) {
         return favoriteRepository.findAllByUserId(p, id);
@@ -45,13 +45,13 @@ public class FavoriteServiceImpl implements FavoriteService {
                 .build();
 
         var favoriteSaved = favoriteRepository.save(favorite);
-        return mapFavoriteEntity2FavoriteResponseDTO.map(favoriteSaved);
+        return mapFavoriteEntityToFavoriteResponseDTO.map(favoriteSaved);
     }
 
     @Override
     public FavoriteResponseDTO delete(Long id) {
         var favorite = favoriteRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         favoriteRepository.delete(favorite);
-        return mapFavoriteEntity2FavoriteResponseDTO.map(favorite);
+        return mapFavoriteEntityToFavoriteResponseDTO.map(favorite);
     }
 }

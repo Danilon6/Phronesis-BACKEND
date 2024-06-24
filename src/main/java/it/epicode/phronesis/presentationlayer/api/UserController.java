@@ -131,7 +131,6 @@ public class UserController {
         var u = userService.update(id, UpdateUserDTO.builder()
                 .withFirstName(model.firstName())
                 .withLastName(model.lastName())
-                .withUsername(model.username())
                 .withEmail(model.email())
                 .withBio(model.bio())
                 .build());

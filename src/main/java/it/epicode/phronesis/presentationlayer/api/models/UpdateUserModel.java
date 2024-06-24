@@ -10,11 +10,7 @@ public record UpdateUserModel (
         String firstName,
 
         @NotBlank(message = "Il tuo cognome non può essere vuoto")
-         String lastName,
-
-        @NotBlank(message = "Lo username non può contenere solo spazi vuoti")
-        @Size(max = 50, message ="Il tuo username è troppo lungo max 50 caratteri")
-        String username,
+        String lastName,
 
         @Email(message = "Inserisci una email valida")
         String email,

@@ -22,7 +22,7 @@ public class UserReportServiceImpl implements UserReportService {
     UserReportRepository userReportRepository;
 
     @Autowired
-    Mapper<UserReport, UserReportResponseDTO> mapUserReportEntity2UserReportResponseDTO;
+    Mapper<UserReport, UserReportResponseDTO> mapUserReportEntityToUserReportResponseDTO;
 
 
     @Autowired
@@ -47,7 +47,7 @@ public class UserReportServiceImpl implements UserReportService {
     @Override
     public UserReportResponseDTO getById(Long id) {
         var userReport = userReportRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
-        return mapUserReportEntity2UserReportResponseDTO.map(userReport);
+        return mapUserReportEntityToUserReportResponseDTO.map(userReport);
     }
 
     @Override
@@ -61,13 +61,13 @@ public class UserReportServiceImpl implements UserReportService {
                 .withReason(e.getReason())
                 .build();
 
-        return mapUserReportEntity2UserReportResponseDTO.map(userReportRepository.save(userReport));
+        return mapUserReportEntityToUserReportResponseDTO.map(userReportRepository.save(userReport));
     }
 
     @Override
     public UserReportResponseDTO delete(Long id) {
         var userReport = userReportRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         userReportRepository.delete(userReport);
-        return mapUserReportEntity2UserReportResponseDTO.map(userReport);
+        return mapUserReportEntityToUserReportResponseDTO.map(userReport);
     }
 }

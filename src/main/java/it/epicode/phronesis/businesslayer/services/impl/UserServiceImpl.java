@@ -25,6 +25,10 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.Duplicat
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.EmailSendingException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.UnsupportedEmailEncodingException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.*;
+import it.epicode.phronesis.presentationlayer.api.exceptions.user.banned.UserAlreadyBannedException;
+import it.epicode.phronesis.presentationlayer.api.exceptions.user.banned.UserAlreadyUnbannedException;
+import it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled.UserIsAlreadyEnabledException;
+import it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled.UserNotEnabledException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -189,17 +193,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<LoginResponseDTO> login(String username, String password) {
         try {
-            //SI EFFETTUA IL LOGIN
-            //SI CREA UNA AUTENTICAZIONE OVVERO L'OGGETTO DI TIPO AUTHENTICATION
+
             var a = auth.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-            //SI CREA UN CONTESTO DI SICUREZZA CHE SARA UTILIZZATO IN PIU OCCASIONI
             SecurityContextHolder.getContext().setAuthentication(a);
-
 
             var dto = mapLogin.map(usersRepository.findOneByUsername(username).orElseThrow());
 
-            //UTILIZZO DI JWTUTILS PER GENERARE IL TOKEN UTILIZZANDO UNA AUTHENTICATION E LO ASSEGNA ALLA LOGINRESPONSEDTO
             dto.setToken(jwt.generateToken(a));
 
             return Optional.of(dto);
@@ -226,21 +226,20 @@ public class UserServiceImpl implements UserService {
         return usersRepository.findAllBy(p);
     }
 
-    //Nel frontend potrei fornire all utente solo un modulo epr cambiare i dati tranne l'immagine
-    //per cambiare l'immagine lo mandiamo ad un altro modulo con endpoint diverso
     @Override
     public RegisteredUserDTO update(long id, UpdateUserDTO user) {
         var u = usersRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
-        var usernameDuplicated = usersRepository.findOneByUsername(user.getUsername());
         var emailDuplicated = usersRepository.findByEmail(user.getEmail());
         //verifico che l'email cambiata non appartenga a nessun'altro utente
-        if (emailDuplicated.isPresent() && !Objects.equals(emailDuplicated.get().getEmail(), user.getEmail())) {
+        if (emailDuplicated.isPresent() && !Objects.equals(emailDuplicated.get().getEmail(), u.getEmail())) {
             throw new DuplicateEmailException(user.getEmail());
         //verifico che lo username cambiato non appartenga a nessun'altro utente
-        } else if (usernameDuplicated.isPresent() && !Objects.equals(usernameDuplicated.get().getUsername(), user.getUsername())) {
-            throw new DuplicateUsernameException(user.getUsername());
         } else {
+            boolean isEmailChanged = !Objects.equals(user.getEmail(), u.getEmail());
             try {
+                if (isEmailChanged) {
+                    mailService.notifyEmailChange(u, u.getEmail(), user.getEmail() );
+                }
                 BeanUtils.copyProperties(user, u);
 
                 return mapRegisteredUser.map(usersRepository.save(u));

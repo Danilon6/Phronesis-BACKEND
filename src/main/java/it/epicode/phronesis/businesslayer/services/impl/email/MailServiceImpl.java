@@ -64,6 +64,47 @@ public class MailServiceImpl implements MailService {
             throw new UnsupportedEmailEncodingException(user.getEmail());
         }
     }
+    public void notifyEmailChange(User user, String oldEmail, String newEmail) throws EmailSendingException, UnsupportedEmailEncodingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setFrom("phronesis_support@phronesis.com", "Phronesis");
+            helper.setTo(oldEmail);
+            helper.setSubject("Cambio di indirizzo email associato al tuo account 🌟");
+
+            String emailContent =
+                    "<html>" +
+                            "<head>" +
+                            "<style>" +
+                            "body { font-family: 'Tenor Sans', Arial, sans-serif; font-weight: 400; }" +
+                            ".email-container { padding: 20px; }" +
+                            "</style>" +
+                            "</head>" +
+                            "<body>" +
+                            "<div class='email-container'>" +
+                            "<div>" +
+                            "<p style='font-size: 18px;'>Ciao <span style='color: blue;'><strong>" +
+                            user.getFirstName() + " " + user.getLastName() +
+                            "</strong></span>,</p>" +
+                            "<p style='font-size: 14px;'>Questo è un avviso che l'indirizzo email associato al tuo account Phronesis è stato cambiato.</p>" +
+                            "<p style='font-size: 14px;'>Il nuovo indirizzo email associato al tuo account è: <strong>" + newEmail + "</strong>.</p>" +
+                            "<p style='font-size: 14px;'>Se non hai richiesto questo cambiamento, ti preghiamo di contattarci immediatamente.</p>" +
+                            "<p style='font-size: 14px;'>Per ulteriori informazioni, puoi contattarci a <a href='mailto:phronesis_support@phronesis.com'>phronesis_support@phronesis.com</a>.</p>" +
+                            "<p style='font-size: 14px;'>Grazie,</p>" +
+                            "<p style='font-size: 14px;'>🌟 Il Team di Phronesis 🌟</p>" +
+                            "</div>" +
+                            "</div>" +
+                            "</body>" +
+                            "</html>";
+
+            helper.setText(emailContent, true);
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new EmailSendingException(oldEmail);
+        } catch (UnsupportedEncodingException e) {
+            throw new UnsupportedEmailEncodingException(oldEmail);
+        }
+    }
 
     @Override
     public void sendMailNewVerificationLink(User user, String token) throws EmailSendingException, UnsupportedEmailEncodingException {

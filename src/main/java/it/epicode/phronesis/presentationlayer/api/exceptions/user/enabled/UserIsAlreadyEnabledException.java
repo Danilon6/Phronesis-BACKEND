@@ -1,4 +1,4 @@
-package it.epicode.phronesis.presentationlayer.api.exceptions.user;
+package it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled;
 
 import java.io.Serial;
 

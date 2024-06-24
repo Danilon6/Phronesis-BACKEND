@@ -11,6 +11,7 @@ import it.epicode.phronesis.businesslayer.dto.report.ReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.report.UserReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.*;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
+import it.epicode.phronesis.datalayer.entities.Follow;
 import it.epicode.phronesis.datalayer.entities.Post;
 import it.epicode.phronesis.datalayer.entities.Roles;
 import it.epicode.phronesis.datalayer.entities.User;
@@ -34,7 +35,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import java.util.List;
 import java.util.Properties;
 
 
@@ -94,7 +94,7 @@ public class BeansConfiguration {
 	//Configurazione dei mapper per l'utente
 	@Bean
 	@Scope("singleton")
-	Mapper<RegisterUserDTO, User> mapRegisterUser2UserEntity() {
+	Mapper<RegisterUserDTO, User> mapRegisterUserToUserEntity() {
 		return (input) -> User.builder()
 				.withFirstName(input.getFirstName())
 				.withLastName(input.getLastName())
@@ -107,7 +107,7 @@ public class BeansConfiguration {
 
 	@Bean
 	@Scope("singleton")
-	Mapper<User, RegisteredUserDTO> mapUserEntity2RegisteredUser() {
+	Mapper<User, RegisteredUserDTO> mapUserEntityToRegisteredUser() {
 		return (input) -> RegisteredUserDTO.builder()
 				.withId(input.getId())
 				.withCreatedAt(input.getCreatedAt())
@@ -125,7 +125,7 @@ public class BeansConfiguration {
 
 	@Bean
 	@Scope("singleton")
-	Mapper<User, LoginResponseDTO> mapUserEntity2LoginResponse() {
+	Mapper<User, LoginResponseDTO> mapUserEntityToLoginResponse() {
 		return (input) -> LoginResponseDTO.builder()
 				.withUser(RegisteredUserDTO.builder()
 						.withId(input.getId())
@@ -146,7 +146,7 @@ public class BeansConfiguration {
 
 	@Bean
 	@Scope("singleton")
-	Mapper<User, UserResponsePartialDTO> mapUserEntity2UserResponsePartialDTO () {
+	Mapper<User, UserResponsePartialDTO> mapUserEntityToUserResponsePartialDTO () {
 		return (input) -> UserResponsePartialDTO.builder()
 				.withId(input.getId())
 				.withUsername(input.getUsername())
@@ -154,17 +154,31 @@ public class BeansConfiguration {
 				.build();
 	}
 
+	//Mapper per il follow
+	@Bean
+	@Scope("singleton")
+	Mapper<Follow, FollowResponseDTO> mapFollowEntityToFollowResponseDTO() {
+		return (input) -> FollowResponseDTO.builder()
+				.withFollower(
+						mapUserEntityToUserResponsePartialDTO().map(input.getFollower())
+				)
+				.withFollowing(
+						mapUserEntityToUserResponsePartialDTO().map(input.getFollowing())
+				)
+				.build();
+	}
+
 	//Mapper per i roles
 	@Bean
 	@Scope("singleton")
-	Mapper<RolesRequestDTO, Roles> mapRolesRequestDTO2RolesEntity () {
+	Mapper<RolesRequestDTO, Roles> mapRolesRequestDTOToRolesEntity () {
 		return (input) -> Roles.builder()
 				.withRoleType(input.getRoleType())
 				.build();
 	}
 	@Bean
 	@Scope("singleton")
-	Mapper<Roles, RolesResponseDTO> mapRolesEntity2RolesResponseDTO () {
+	Mapper<Roles, RolesResponseDTO> mapRolesEntityToRolesResponseDTO () {
 		return (input) ->
 				RolesResponseDTO.builder()
 				.withId(input.getId())
@@ -178,7 +192,7 @@ public class BeansConfiguration {
 	//mapper per i post
 	@Bean
 	@Scope("singleton")
-	Mapper<PostRequestDTO, Post> mapPostRequestDTO2Post () {
+	Mapper<PostRequestDTO, Post> mapPostRequestDTOToPost () {
 		return (input) -> Post.builder()
 				.withTitle(input.getTitle())
 				.withContent(input.getContent())
@@ -188,20 +202,20 @@ public class BeansConfiguration {
 
 	@Bean
 	@Scope("singleton")
-	Mapper<Post, PostResponseDTO> mapPost2PostResponseDTO() {
+	Mapper<Post, PostResponseDTO> mapPostToPostResponseDTO() {
 		return (input) -> PostResponseDTO.builder()
 				.withId(input.getId())
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
 				.withTitle(input.getTitle())
 				.withContent(input.getContent())
-				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser()))
+				.withUser(mapUserEntityToUserResponsePartialDTO().map(input.getUser()))
 				.build();
 	}
 
 	@Bean
 	@Scope("singleton")
-	Mapper<Post, PostPartialResponseDTO> mapPost2PostPartialResponseDTO() {
+	Mapper<Post, PostPartialResponseDTO> mapPostToPostPartialResponseDTO() {
 		return (input) -> PostPartialResponseDTO.builder()
 				.withId(input.getId())
 				.withTitle(input.getTitle())
@@ -217,60 +231,60 @@ public class BeansConfiguration {
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
 				.withContent(input.getContent())
-				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser()))
+				.withUser(mapUserEntityToUserResponsePartialDTO().map(input.getUser()))
 				.build();
 	}
 
 	//Mapper per i like
 	@Bean
 	@Scope("singleton")
-	Mapper<Like, UserPostInteractionResponseDTO> mapLikeEntity2UserPostInteractionResponseDTO() {
+	Mapper<Like, UserPostInteractionResponseDTO> mapLikeEntityToUserPostInteractionResponseDTO() {
 		return (input) -> UserPostInteractionResponseDTO.builder()
 				.withId(input.getId())
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
-				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser()))
+				.withUser(mapUserEntityToUserResponsePartialDTO().map(input.getUser()))
 				.build();
 	}
 
 	//Mapper per i preferiti
 	@Bean
 	@Scope("singleton")
-	Mapper<Favorite, FavoriteResponseDTO> mapFavoriteEntity2FavoriteResponseDTO(){
+	Mapper<Favorite, FavoriteResponseDTO> mapFavoriteEntityToFavoriteResponseDTO(){
 		return (input) -> FavoriteResponseDTO.favoriteResponseBuilder()
 				.withId(input.getId())
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
-				.withUser(mapUserEntity2UserResponsePartialDTO().map(input.getUser())
+				.withUser(mapUserEntityToUserResponsePartialDTO().map(input.getUser())
 				)
-				.withPost(mapPost2PostResponseDTO().map(input.getPost()))
+				.withPost(mapPostToPostResponseDTO().map(input.getPost()))
 				.build();
 	}
 
 	//Mapper per i report
 	@Bean
 	@Scope("singleton")
-	Mapper<PostReport, PostReportResponseDTO> mapPostReportEntity2PostReportResponseDTO(){
+	Mapper<PostReport, PostReportResponseDTO> mapPostReportEntityToPostReportResponseDTO(){
 		return (input) -> PostReportResponseDTO.postReportResponseBuilder()
 				.withId(input.getId())
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
 				.withReason(input.getReason())
-				.withReportedBy(mapUserEntity2UserResponsePartialDTO().map(input.getReportedBy()))
-				.withReportedPost(mapPost2PostPartialResponseDTO().map(input.getReportedPost()))
+				.withReportedBy(mapUserEntityToUserResponsePartialDTO().map(input.getReportedBy()))
+				.withReportedPost(mapPostToPostPartialResponseDTO().map(input.getReportedPost()))
 				.build();
 	}
 
 	@Bean
 	@Scope("singleton")
-	Mapper<UserReport, UserReportResponseDTO> mapUserReportEntity2UserReportResponseDTO(){
+	Mapper<UserReport, UserReportResponseDTO> mapUserReportEntityToUserReportResponseDTO(){
 		return (input) -> UserReportResponseDTO.userReportResponseBuilder()
 				.withId(input.getId())
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
 				.withReason(input.getReason())
-				.withReportedBy(mapUserEntity2UserResponsePartialDTO().map(input.getReportedBy()))
-				.withReportedUser(mapUserEntity2UserResponsePartialDTO().map(input.getReportedUser()))
+				.withReportedBy(mapUserEntityToUserResponsePartialDTO().map(input.getReportedBy()))
+				.withReportedUser(mapUserEntityToUserResponsePartialDTO().map(input.getReportedUser()))
 				.build();
 	}
 

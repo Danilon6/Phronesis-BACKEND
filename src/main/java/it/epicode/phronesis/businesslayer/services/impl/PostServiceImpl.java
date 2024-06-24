@@ -58,10 +58,10 @@ public class PostServiceImpl implements PostService {
     Mapper<User, UserResponsePartialDTO> mapUserToPartialResponseDTO;
 
     @Autowired
-    Mapper<PostRequestDTO, Post> mapPostRequestDTO2Post;
+    Mapper<PostRequestDTO, Post> mapPostRequestDTOToPost;
 
     @Autowired
-    Mapper<Post, PostResponseDTO> mapPost2PostResponseDTO;
+    Mapper<Post, PostResponseDTO> mapPostToPostResponseDTO;
 
 
     @Override
@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
         var comments = commentRepository.findByPostId(postEntity.getId());
         var likes = likeRepository.findByPostId(postEntity.getId());
 
-        var postResponse = mapPost2PostResponseDTO.map(postEntity);
+        var postResponse = mapPostToPostResponseDTO.map(postEntity);
 
         postResponse.setComments(comments);
         postResponse.setLikes(likes);
@@ -94,7 +94,7 @@ public class PostServiceImpl implements PostService {
         var user = usersRepository.findById(e.getUserId()).orElseThrow(()-> new NotFoundException(e.getUserId()));
 
         //converto la request in una entity
-        var postEntity = mapPostRequestDTO2Post.map(e);
+        var postEntity = mapPostRequestDTOToPost.map(e);
 
         //setto lo user
         postEntity.setUser(user);
@@ -105,7 +105,7 @@ public class PostServiceImpl implements PostService {
         //converto il post appena salvato in una response
         //i like e i commenti saranno automaticamente null
 
-        return mapPost2PostResponseDTO.map(postSaved);
+        return mapPostToPostResponseDTO.map(postSaved);
 
     }
 
@@ -117,7 +117,7 @@ public class PostServiceImpl implements PostService {
 
         BeanUtils.copyProperties(e, post);
 
-        return mapPost2PostResponseDTO.map(postRepository.save(post));
+        return mapPostToPostResponseDTO.map(postRepository.save(post));
 
     }
 
@@ -126,7 +126,7 @@ public class PostServiceImpl implements PostService {
         try {
             var p = postRepository.findById(id).orElseThrow();
             postRepository.delete(p);
-            return mapPost2PostResponseDTO.map(p);
+            return mapPostToPostResponseDTO.map(p);
         } catch (NoSuchElementException ex) {
             log.error(String.format("Cannot find post with id = %s", id), ex);
             throw new RuntimeException("Cannot find post...");

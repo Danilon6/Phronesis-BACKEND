@@ -8,6 +8,7 @@ public interface MailService {
 
     void sendMail(User user, String token) throws EmailSendingException, UnsupportedEmailEncodingException;
     void sendMailNewVerificationLink(User user, String token) throws EmailSendingException, UnsupportedEmailEncodingException;
+    void notifyEmailChange(User user, String oldEmail, String newEmail) throws EmailSendingException, UnsupportedEmailEncodingException;
     void sendUnbannedEmail(User user) throws EmailSendingException, UnsupportedEmailEncodingException;
     void sendBannedEmail(User user, String reason) throws EmailSendingException, UnsupportedEmailEncodingException;
 }

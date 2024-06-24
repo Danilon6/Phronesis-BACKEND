@@ -3,6 +3,7 @@ package it.epicode.phronesis.config;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import it.epicode.phronesis.businesslayer.security.SecurityUserDetails;
+import it.epicode.phronesis.datalayer.entities.User;
 import it.epicode.phronesis.datalayer.entities.enums.JwtType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,7 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -77,21 +80,6 @@ public class JwtUtils {
 
 	}
 
-	public String getTokenFromAuthentication() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication instanceof UsernamePasswordAuthenticationToken) {
-			UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) authentication;
-			// Assumendo che l'utente autenticato abbia un token JWT
-			Object credentials = authToken.getCredentials();
-			if (credentials instanceof String) {
-				return (String) credentials; // Il token JWT è memorizzato come credenziale
-			}
-		}
-		return null; // Nessun token trovato
-	}
-
-
-
 	public boolean isTokenValid(String token, String type) {
 		try {
 			String keyStr = getKeyByType(type);
@@ -123,4 +111,5 @@ public class JwtUtils {
 				.verifyWith(key).build()
 				.parseSignedClaims(token).getPayload().getSubject();
 	}
+
 }

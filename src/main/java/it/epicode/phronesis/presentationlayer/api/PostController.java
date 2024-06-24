@@ -10,8 +10,6 @@ import it.epicode.phronesis.businesslayer.services.interfaces.PostService;
 import it.epicode.phronesis.datalayer.repositories.PostRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.ApiValidationException;
 import it.epicode.phronesis.presentationlayer.api.models.PostRequestModel;
-import it.epicode.phronesis.presentationlayer.api.models.RegisterUserModel;
-import it.epicode.phronesis.presentationlayer.api.models.userInteractionPost.CommentRequestModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,13 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @RestController
 @RequestMapping("api/post")
-@Slf4j
 public class PostController {
 
     @Autowired

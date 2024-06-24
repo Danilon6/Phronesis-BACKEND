@@ -22,7 +22,7 @@ public class PostReportServiceImpl implements PostReportService {
     PostReportRepository postReportRepository;
 
     @Autowired
-    Mapper<PostReport, PostReportResponseDTO> mapPostReportEntity2PostReportResponseDTO;
+    Mapper<PostReport, PostReportResponseDTO> mapPostReportEntityToPostReportResponseDTO;
 
     @Autowired
     UsersRepository usersRepository;
@@ -45,7 +45,7 @@ public class PostReportServiceImpl implements PostReportService {
     @Override
     public PostReportResponseDTO getById(Long id) {
         var postReport = postReportRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
-        return mapPostReportEntity2PostReportResponseDTO.map(postReport);
+        return mapPostReportEntityToPostReportResponseDTO.map(postReport);
     }
 
     @Override
@@ -58,13 +58,13 @@ public class PostReportServiceImpl implements PostReportService {
                 .withReportedPost(post)
                 .withReason(e.getReason())
                 .build();
-        return mapPostReportEntity2PostReportResponseDTO.map(postReportRepository.save(postReport));
+        return mapPostReportEntityToPostReportResponseDTO.map(postReportRepository.save(postReport));
     }
 
     @Override
     public PostReportResponseDTO delete(Long id) {
         var postReport = postReportRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         postReportRepository.delete(postReport);
-        return mapPostReportEntity2PostReportResponseDTO.map(postReport);
+        return mapPostReportEntityToPostReportResponseDTO.map(postReport);
     }
 }

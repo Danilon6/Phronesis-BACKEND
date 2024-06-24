@@ -22,17 +22,17 @@ public class RolesServiceImpl implements RolesService {
     RolesRepository rolesRepository;
 
     @Autowired
-    Mapper<RolesRequestDTO, Roles> mapRolesRequestDTO2Roles;
+    Mapper<RolesRequestDTO, Roles> mapRolesRequestDTOToRoles;
 
     @Autowired
-    Mapper<Roles, RolesResponseDTO> mapRoles2RolesResponseDTO;
+    Mapper<Roles, RolesResponseDTO> mapRolesToRolesResponseDTO;
 
     @Override
     public RolesResponseDTO save(RolesRequestDTO role) {
             return
-                    mapRoles2RolesResponseDTO.map(
+                    mapRolesToRolesResponseDTO.map(
 
-                    mapRolesRequestDTO2Roles.map(role)
+                    mapRolesRequestDTOToRoles.map(role)
             );
     }
 
@@ -46,6 +46,6 @@ public class RolesServiceImpl implements RolesService {
     public RolesResponseDTO delete(Long id) {
         var r = rolesRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
         rolesRepository.delete(r);
-        return mapRoles2RolesResponseDTO.map(r);
+        return mapRolesToRolesResponseDTO.map(r);
     }
 }

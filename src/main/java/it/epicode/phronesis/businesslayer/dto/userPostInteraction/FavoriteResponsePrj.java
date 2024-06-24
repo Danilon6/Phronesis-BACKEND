@@ -1,8 +1,5 @@
 package it.epicode.phronesis.businesslayer.dto.userPostInteraction;
 
-import it.epicode.phronesis.businesslayer.dto.UserResponsePartialDTO;
-import it.epicode.phronesis.businesslayer.dto.post.PostResponseDTO;
-import it.epicode.phronesis.datalayer.entities.Post;
 
 import java.time.LocalDateTime;
 import java.util.List;
