@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -62,7 +63,7 @@ public class UserController {
 
 
 
-    @PostMapping("/activate")
+    @GetMapping("/activate")
     public ResponseEntity<String> activateAccount(@RequestParam String token) {
         try {
             if (userService.activateUser(token)) {
@@ -75,31 +76,34 @@ public class UserController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<RegisteredUserDTO> register(@RequestParam("firstName") String firstName,
-                                                      @RequestParam("lastName") String lastName,
-                                                      @RequestParam("username") String username,
-                                                      @RequestParam("email") String email,
-                                                      @RequestParam("password") String password,
-                                                      @RequestParam("bio") String bio,
-                                                      @RequestParam("profilePictureFile") MultipartFile profilePictureFile) {
+    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<LoginAndRegisterResponseDTO> register(@RequestPart("newUser") @Validated RegisterUserModel model,
+                                                      @RequestPart(value = "profilePictureFile", required = false) MultipartFile profilePictureFile,
+                                                      BindingResult validator
+                                                      ) {
+        log.info("Received newUser: {}", model);
+        log.info("Received profilePictureFile: {}", profilePictureFile);
+        if (validator.hasErrors()) {
+            throw  new ApiValidationException(validator.getAllErrors());
+        }
+
 
         var registeredUser = userService.register(
                 RegisterUserDTO.builder()
-                        .withFirstName(firstName)
-                        .withLastName(lastName)
-                        .withUsername(username)
-                        .withEmail(email)
-                        .withBio(bio)
+                        .withFirstName(model.firstName())
+                        .withLastName(model.lastName())
+                        .withUsername(model.username())
+                        .withEmail(model.email())
+                        .withBio(model.bio())
                         .withProfilePictureFile(profilePictureFile)
-                        .withPassword(password)
+                        .withPassword(model.password())
                 .build());
 
         return  new ResponseEntity<> (registeredUser, HttpStatus.OK);
     }
 
     @PostMapping("login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Validated LoginModel model, BindingResult validator) {
+    public ResponseEntity<LoginAndRegisterResponseDTO> login(@RequestBody @Validated LoginModel model, BindingResult validator) {
         if (validator.hasErrors()) {
             throw  new ApiValidationException(validator.getAllErrors());
         }

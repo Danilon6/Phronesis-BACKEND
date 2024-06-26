@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class LoginResponseDTO {
+public class LoginAndRegisterResponseDTO {
     RegisteredUserDTO user;
     String token;
 
     @Builder(setterPrefix = "with")
-    public LoginResponseDTO(RegisteredUserDTO user, String token) {
+    public LoginAndRegisterResponseDTO(RegisteredUserDTO user, String token) {
         this.user = user;
         this.token = token;
     }

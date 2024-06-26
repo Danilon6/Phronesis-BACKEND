@@ -3,18 +3,13 @@ package it.epicode.phronesis.config;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import it.epicode.phronesis.businesslayer.security.SecurityUserDetails;
-import it.epicode.phronesis.datalayer.entities.User;
 import it.epicode.phronesis.datalayer.entities.enums.JwtType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -57,9 +52,9 @@ public class JwtUtils {
 				.signWith(key)
 				.compact();
 		// a scopo di test il link è del backned ma dovrebbe essere quello del frontend che porta ad una pagina del frontend
-		//questa pagina è responsabile di richiamare l'enpoint del abckend e di fornire un messaggio a schermo a seconda della risposta del abckend
-		//questa pagina probabilmene sarà un loader e quando la risposat arriverà ci sarà un messaggio a tutto schermo con un modale o un popup
-		return "http://localhost:8080/api/user/activate?token=" + token;
+		//questa pagina è responsabile di richiamare l'enpoint del backend e di fornire un messaggio a schermo a seconda della risposta del abckend
+		//questa pagina probabilmene sarà un loader e quando la risposta arriverà ci sarà un messaggio a tutto schermo con un modale o un popup
+		return token;
 
 	}
 

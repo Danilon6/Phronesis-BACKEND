@@ -15,9 +15,9 @@ import java.util.Optional;
 
 public interface UserService {
 
-    RegisteredUserDTO register(@Valid RegisterUserDTO user);
+    LoginAndRegisterResponseDTO register(@Valid RegisterUserDTO user);
 
-    Optional<LoginResponseDTO> login(String username, String password);
+    Optional<LoginAndRegisterResponseDTO> login(String username, String password);
 
     RegisteredUserDTO getById(long id);
 

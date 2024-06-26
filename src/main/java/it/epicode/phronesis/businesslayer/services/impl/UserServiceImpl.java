@@ -29,7 +29,6 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.user.banned.UserAlr
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.banned.UserAlreadyUnbannedException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled.UserIsAlreadyEnabledException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled.UserNotEnabledException;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +83,7 @@ public class UserServiceImpl implements UserService {
     Mapper<User, RegisteredUserDTO> mapRegisteredUser;
 
     @Autowired
-    Mapper<User, LoginResponseDTO> mapLogin;
+    Mapper<User, LoginAndRegisterResponseDTO> mapLoginAndRegister;
 
     @Autowired
     Mapper<User, UserResponsePartialDTO> mapUserToPartialResponseDTO;
@@ -96,7 +95,10 @@ public class UserServiceImpl implements UserService {
     ImageService cloudinaryService;
 
     @Value("${spring.servlet.multipart.max-file-size}")
-    private String maxFileSize;
+    String maxFileSize;
+
+    @Value("${default.image.url}")
+    String defaultImageUrl;
 
     @Autowired
     MailService mailService;
@@ -104,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public RegisteredUserDTO register(@Valid RegisterUserDTO newUser) {
+    public LoginAndRegisterResponseDTO register(RegisterUserDTO newUser) {
         var emailDuplicated = usersRepository.findByEmail(newUser.getEmail());
         var usernameDuplicated = usersRepository.findOneByUsername(newUser.getUsername());
 
@@ -117,10 +119,13 @@ public class UserServiceImpl implements UserService {
 
                 var userEntity = mapEntity.map(newUser);
 
-                cloudinaryService.verifyMaxSizeOfFile(newUser.getProfilePictureFile());
+                if (newUser.getProfilePictureFile() != null && !newUser.getProfilePictureFile().isEmpty()) {
+                    cloudinaryService.verifyMaxSizeOfFile(newUser.getProfilePictureFile());
                     // Carica l'immagine su Cloudinary
                     var url = (String) cloudinary.uploader().upload(newUser.getProfilePictureFile().getBytes(), ObjectUtils.emptyMap()).get("url");
                     userEntity.setProfilePicture(url);
+                }
+                userEntity.setProfilePicture(defaultImageUrl);
 
                 var p = encoder.encode(newUser.getPassword());
                 log.info("Password encrypted: {}", p);
@@ -143,9 +148,9 @@ public class UserServiceImpl implements UserService {
                             );
                         }
                         var uEntity = usersRepository.save(userEntity);
-                    var u = mapRegisteredUser.map(uEntity);
-                    var token = jwt.generateToken(u.getId());
-
+                    var u = mapLoginAndRegister.map(uEntity);
+                    var token = jwt.generateToken(u.getUser().getId());
+                    u.setToken(token);
                        mailService.sendMail(uEntity, token);
                        return u;
             } catch (Exception e) {
@@ -191,14 +196,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Optional<LoginResponseDTO> login(String username, String password) {
+    public Optional<LoginAndRegisterResponseDTO> login(String username, String password) {
         try {
 
             var a = auth.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
             SecurityContextHolder.getContext().setAuthentication(a);
 
-            var dto = mapLogin.map(usersRepository.findOneByUsername(username).orElseThrow());
+            var dto = mapLoginAndRegister.map(usersRepository.findOneByUsername(username).orElseThrow());
 
             dto.setToken(jwt.generateToken(a));
 

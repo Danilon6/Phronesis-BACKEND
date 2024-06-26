@@ -5,9 +5,7 @@ import it.epicode.phronesis.businesslayer.dto.*;
 import it.epicode.phronesis.businesslayer.dto.post.PostPartialResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostResponseDTO;
-import it.epicode.phronesis.businesslayer.dto.report.PostReportRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.report.PostReportResponseDTO;
-import it.epicode.phronesis.businesslayer.dto.report.ReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.report.UserReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.*;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
@@ -16,15 +14,12 @@ import it.epicode.phronesis.datalayer.entities.Post;
 import it.epicode.phronesis.datalayer.entities.Roles;
 import it.epicode.phronesis.datalayer.entities.User;
 import it.epicode.phronesis.datalayer.entities.report.PostReport;
-import it.epicode.phronesis.datalayer.entities.report.Report;
 import it.epicode.phronesis.datalayer.entities.report.UserReport;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Favorite;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Like;
-import it.epicode.phronesis.datalayer.entities.userPostInteraction.UserPostInteraction;
 import it.epicode.phronesis.datalayer.repositories.PostRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
-import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -125,8 +120,8 @@ public class BeansConfiguration {
 
 	@Bean
 	@Scope("singleton")
-	Mapper<User, LoginResponseDTO> mapUserEntityToLoginResponse() {
-		return (input) -> LoginResponseDTO.builder()
+	Mapper<User, LoginAndRegisterResponseDTO> mapUserEntityToLoginResponse() {
+		return (input) -> LoginAndRegisterResponseDTO.builder()
 				.withUser(RegisteredUserDTO.builder()
 						.withId(input.getId())
 						.withCreatedAt(input.getCreatedAt())
