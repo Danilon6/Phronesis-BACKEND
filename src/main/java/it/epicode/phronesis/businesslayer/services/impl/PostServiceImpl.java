@@ -2,6 +2,7 @@ package it.epicode.phronesis.businesslayer.services.impl;
 
 import com.cloudinary.Cloudinary;
 import it.epicode.phronesis.businesslayer.dto.UserResponsePartialDTO;
+import it.epicode.phronesis.businesslayer.dto.post.PostEditRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.post.PostResponsePrj;
@@ -15,10 +16,12 @@ import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Like;
 import it.epicode.phronesis.datalayer.repositories.PostRepository;
 import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositories.CommentRepository;
+import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositories.FavoriteRepository;
 import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositories.LikeRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.DuplicateTitleException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,9 @@ public class PostServiceImpl implements PostService {
     UsersRepository usersRepository;
 
     @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
     Cloudinary cloudinary;
 
     @Autowired
@@ -67,6 +73,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostResponsePrj> getAll(Pageable p) {
         return postRepository.findAllBy(p);
+    }
+
+    @Override
+    public Page<PostResponsePrj> getAllByUserId(Pageable p, Long id) {
+        return postRepository.findAllByUserId(p, id);
     }
 
     @Override
@@ -95,10 +106,8 @@ public class PostServiceImpl implements PostService {
 
         //converto la request in una entity
         var postEntity = mapPostRequestDTOToPost.map(e);
-
         //setto lo user
         postEntity.setUser(user);
-
         //salvo l'entità
         var postSaved = postRepository.save(postEntity);
 
@@ -110,9 +119,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponseDTO update(Long id, PostRequestDTO e) throws IOException {
-        //non si può modificare l'autore del post quindi non prevedo una conversione da id a User, in futuro potrei prevedere un DTO
-        //diverso per la modifica
+    public PostResponseDTO update(Long id, PostEditRequestDTO e) throws IOException {
         var post = postRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
 
         BeanUtils.copyProperties(e, post);
@@ -121,10 +128,12 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Transactional
     @Override
     public PostResponseDTO delete(Long id) {
         try {
             var p = postRepository.findById(id).orElseThrow();
+            favoriteRepository.deleteByPost(p);
             postRepository.delete(p);
             return mapPostToPostResponseDTO.map(p);
         } catch (NoSuchElementException ex) {

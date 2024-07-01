@@ -18,7 +18,7 @@ import java.util.List;
 @Builder(setterPrefix = "with")
 public class Post extends BaseEntity{
 
-    @Column(length = 100, nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String title;
 
     @Column(nullable = false, length = 500)

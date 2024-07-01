@@ -3,6 +3,7 @@ package it.epicode.phronesis.presentationlayer.api.userPostInteraction;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.*;
 import it.epicode.phronesis.businesslayer.services.interfaces.userInteractionPost.CommentService;
 import it.epicode.phronesis.presentationlayer.api.exceptions.ApiValidationException;
+import it.epicode.phronesis.presentationlayer.api.models.userInteractionPost.CommentRequestEditModel;
 import it.epicode.phronesis.presentationlayer.api.models.userInteractionPost.CommentRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,8 +49,11 @@ public class CommentController {
 
 
     @PatchMapping("{id}")
-    public ResponseEntity<CommentResponseDTO> update (@PathVariable Long id, @RequestParam("content") String content) {
-        var comment = commentService.update(id, content);
+    public ResponseEntity<CommentResponseDTO> update (@PathVariable Long id, @RequestBody @Validated CommentRequestEditModel model, BindingResult validator) {
+        if (validator.hasErrors()) {
+            throw new ApiValidationException(validator.getAllErrors());
+        }
+        var comment = commentService.update(id, model.content());
 
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }

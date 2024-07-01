@@ -3,7 +3,6 @@ package it.epicode.phronesis.businesslayer.services.impl.userPostInteraction;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.FavoriteResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.FavoriteResponsePrj;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionRequestDTO;
-import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponsePrj;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
 import it.epicode.phronesis.businesslayer.services.interfaces.userInteractionPost.FavoriteService;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Favorite;

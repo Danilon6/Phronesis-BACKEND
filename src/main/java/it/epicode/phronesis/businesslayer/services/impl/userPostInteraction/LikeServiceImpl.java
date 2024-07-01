@@ -3,6 +3,7 @@ package it.epicode.phronesis.businesslayer.services.impl.userPostInteraction;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponsePrj;
+import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseWithPostPrj;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
 import it.epicode.phronesis.businesslayer.services.interfaces.userInteractionPost.LikeService;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Like;
@@ -30,9 +31,16 @@ public class LikeServiceImpl implements LikeService {
     @Autowired
     Mapper<Like, UserPostInteractionResponseDTO> mapLikeEntityToUserPostInteractionResponseDTO;
 
+
+
     @Override
     public List<UserPostInteractionResponsePrj> getAllByPostId(Long id) {
         return likeRepository.findByPostId(id);
+    }
+
+    @Override
+    public List<UserPostInteractionResponseWithPostPrj> getAllByUserId(Long id) {
+        return likeRepository.findByUserId(id);
     }
 
     @Override

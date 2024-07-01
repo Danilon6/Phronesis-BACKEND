@@ -2,9 +2,7 @@ package it.epicode.phronesis.businesslayer.dto.post;
 
 import it.epicode.phronesis.businesslayer.dto.UserResponsePartialDTO;
 import it.epicode.phronesis.businesslayer.dto.BaseDTO;
-import it.epicode.phronesis.businesslayer.dto.userPostInteraction.CommentResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.CommentResponsePrj;
-import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponsePrj;
 import lombok.*;
 

@@ -77,17 +77,13 @@ public class UserController {
     }
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<LoginAndRegisterResponseDTO> register(@RequestPart("newUser") @Validated RegisterUserModel model,
-                                                      @RequestPart(value = "profilePictureFile", required = false) MultipartFile profilePictureFile,
-                                                      BindingResult validator
+    public ResponseEntity<RegisteredUserDTO> register(@RequestPart("newUser") @Validated RegisterUserModel model,
+                                                     @RequestPart(value = "profilePictureFile", required = false) MultipartFile profilePictureFile,
+                                                     BindingResult validator
                                                       ) {
-        log.info("Received newUser: {}", model);
-        log.info("Received profilePictureFile: {}", profilePictureFile);
         if (validator.hasErrors()) {
             throw  new ApiValidationException(validator.getAllErrors());
         }
-
-
         var registeredUser = userService.register(
                 RegisterUserDTO.builder()
                         .withFirstName(model.firstName())
@@ -103,14 +99,14 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<LoginAndRegisterResponseDTO> login(@RequestBody @Validated LoginModel model, BindingResult validator) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Validated LoginModel model, BindingResult validator) {
         if (validator.hasErrors()) {
             throw  new ApiValidationException(validator.getAllErrors());
         }
         return new ResponseEntity<>(userService.login(model.username(), model.password()).orElseThrow(), HttpStatus.OK);
     }
 
-    @PostMapping("/request-new-token")
+    @GetMapping("/request-new-token")
     public ResponseEntity<String> requestNewActivationToken(@RequestParam String email) throws UnsupportedEmailEncodingException, EmailSendingException {
         // Verifica se l'utente esiste e non è già attivo
         var u = usersRepository.findByEmail(email);

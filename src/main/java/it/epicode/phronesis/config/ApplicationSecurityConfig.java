@@ -54,16 +54,16 @@ public class ApplicationSecurityConfig {
 				.cors(Customizer.withDefaults()) // Utilizza la configurazione CORS
 				.authorizeHttpRequests(authorize ->
 						authorize //CONFIGURAZIONE DELLA PROTEZIONE DEI VARI ENDPOINT
-								.requestMatchers(HttpMethod.POST, "/api/user").permitAll() //ENDPOINT DI REGISTRAZIONE APERTO A TUTTI
+								.requestMatchers(HttpMethod.POST, "/api/user").permitAll()
 								.requestMatchers("/api/user/login").permitAll()
 								.requestMatchers("/api/user/activate").permitAll()
 								.requestMatchers("/api/user/request-new-token").permitAll()
-								.requestMatchers(HttpMethod.GET, "/**").authenticated() //TUTTE GLI ENDPOINTS DI TIPO GET SONO RICHIAMABILI SOLO SE L'UTENTE E AUTENTICATO
-								.requestMatchers(HttpMethod.POST, "/**").hasAuthority("ADMIN") //TUTTE LE POST POSSONO ESSERE FATTE SOLO DALL'ADMIN
-								.requestMatchers(HttpMethod.PATCH, "/api/user/{id}").authenticated() //SOLO UN UTENTE AUTENTICATO PUO MODIFICARE I SUOI DATI
-								.requestMatchers(HttpMethod.PUT, "/**").hasAuthority("ADMIN") //TUTTE LE PUT POSSONO ESSERE FATTE SOLO DALL'ADMIN
-								.requestMatchers(HttpMethod.DELETE, "/**").hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
-								.requestMatchers("/**").authenticated() //TUTTO CIO CHE PUO ESSERE SFUGGITO RICHIEDE L'AUTENTICAZIONE (SERVE A GESTIRE EVENTUALI DIMENTICANZE)
+								.requestMatchers(HttpMethod.PATCH, "/api/user/{id}").authenticated()
+								.requestMatchers(HttpMethod.GET, "/**").authenticated()
+								.requestMatchers(HttpMethod.POST, "/api/ads").hasAuthority("ADMIN")
+								.requestMatchers(HttpMethod.PUT, "/api/ads").hasAuthority("ADMIN")
+								.requestMatchers(HttpMethod.DELETE, "/api/ads").hasAuthority("ADMIN")
+								.requestMatchers("/**").authenticated()
 				)
 				.httpBasic(Customizer.withDefaults())
 				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

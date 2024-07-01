@@ -1,17 +1,14 @@
 package it.epicode.phronesis.presentationlayer.api.userPostInteraction;
 
-import it.epicode.phronesis.businesslayer.dto.UserResponsePartialDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionRequestDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponsePrj;
+import it.epicode.phronesis.businesslayer.dto.userPostInteraction.UserPostInteractionResponseWithPostPrj;
 import it.epicode.phronesis.businesslayer.services.interfaces.userInteractionPost.LikeService;
-import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositories.LikeRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.ApiValidationException;
 import it.epicode.phronesis.presentationlayer.api.models.userInteractionPost.UserPostInteractionModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -34,6 +31,11 @@ public class LikeController {
         return new ResponseEntity<>(likes, HttpStatus.OK);
     }
 
+    @GetMapping("user/{id}")
+    public ResponseEntity<List<UserPostInteractionResponseWithPostPrj>> getAllLikesByUserId (@PathVariable Long id) {
+        var likes = likeService.getAllByUserId(id);
+        return new ResponseEntity<>(likes, HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<UserPostInteractionResponseDTO> addLike(@RequestBody @Validated UserPostInteractionModel model, BindingResult validator) {

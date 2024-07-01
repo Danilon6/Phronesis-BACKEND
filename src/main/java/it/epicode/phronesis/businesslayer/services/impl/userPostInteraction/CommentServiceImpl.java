@@ -10,6 +10,7 @@ import it.epicode.phronesis.datalayer.repositories.PostRepository;
 import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositories.CommentRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
+import it.epicode.phronesis.presentationlayer.api.models.userInteractionPost.CommentRequestEditModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

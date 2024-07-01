@@ -120,8 +120,8 @@ public class BeansConfiguration {
 
 	@Bean
 	@Scope("singleton")
-	Mapper<User, LoginAndRegisterResponseDTO> mapUserEntityToLoginResponse() {
-		return (input) -> LoginAndRegisterResponseDTO.builder()
+	Mapper<User, LoginResponseDTO> mapUserEntityToLoginResponse() {
+		return (input) -> LoginResponseDTO.builder()
 				.withUser(RegisteredUserDTO.builder()
 						.withId(input.getId())
 						.withCreatedAt(input.getCreatedAt())

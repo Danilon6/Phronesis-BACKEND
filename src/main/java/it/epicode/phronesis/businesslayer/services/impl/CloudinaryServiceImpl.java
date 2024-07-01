@@ -59,13 +59,12 @@ public class CloudinaryServiceImpl implements ImageService {
     @Override
     public void deleteImage(String publicId) throws IOException {
         if (publicId == null || publicId.isEmpty()) {
-            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-            throw new ImageDeletionException("Public ID cannot be null or empty");
+            throw new ImageDeletionException("L'ID pubblico non può essere nullo o vuoto");
         }
         try {
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
         } catch (Exception e) {
-            throw new ImageDeletionException("Failed to delete image with public ID: " + publicId, e);
+            throw new ImageDeletionException("Eliminazione dell'immagine fallita con ID pubblico: " + publicId, e);
         }
     }
 
