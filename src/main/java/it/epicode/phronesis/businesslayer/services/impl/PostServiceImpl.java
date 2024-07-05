@@ -19,6 +19,7 @@ import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositori
 import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositories.FavoriteRepository;
 import it.epicode.phronesis.datalayer.repositories.UserPostInteractionRepositories.LikeRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
+import it.epicode.phronesis.datalayer.repositories.reportRepositories.PostReportRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.DuplicateTitleException;
 import jakarta.transaction.Transactional;
@@ -47,6 +48,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     UsersRepository usersRepository;
+
+    @Autowired
+    PostReportRepository postReportRepository;
 
     @Autowired
     private FavoriteRepository favoriteRepository;
@@ -134,6 +138,7 @@ public class PostServiceImpl implements PostService {
         try {
             var p = postRepository.findById(id).orElseThrow();
             favoriteRepository.deleteByPost(p);
+            postReportRepository.deleteAll(postReportRepository.findAllByReportedPost(p));
             postRepository.delete(p);
             return mapPostToPostResponseDTO.map(p);
         } catch (NoSuchElementException ex) {

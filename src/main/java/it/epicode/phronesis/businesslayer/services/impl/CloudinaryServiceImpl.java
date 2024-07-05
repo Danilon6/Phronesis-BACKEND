@@ -3,10 +3,14 @@ package it.epicode.phronesis.businesslayer.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import it.epicode.phronesis.businesslayer.dto.AdvertRequestDto;
+import it.epicode.phronesis.businesslayer.dto.AdvertResponseDto;
 import it.epicode.phronesis.businesslayer.dto.UserResponsePartialDTO;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
 import it.epicode.phronesis.businesslayer.services.interfaces.image.ImageService;
+import it.epicode.phronesis.datalayer.entities.Advert;
 import it.epicode.phronesis.datalayer.entities.User;
+import it.epicode.phronesis.datalayer.repositories.AdvertRepository;
 import it.epicode.phronesis.datalayer.repositories.PostRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.FileSizeExceededException;
@@ -18,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
 
 
 @Service
@@ -36,7 +42,13 @@ public class CloudinaryServiceImpl implements ImageService {
     UsersRepository usersRepository;
 
     @Autowired
+    AdvertRepository advertRepository ;
+
+    @Autowired
     Mapper<User, UserResponsePartialDTO> mapUserToPartialResponseDTO;
+
+    @Autowired
+    Mapper<Advert, AdvertResponseDto> mapAdvertEntityToAdvertResponseDto;
 
     @Override
     public UserResponsePartialDTO updateProfilePicture(Long id, MultipartFile file) throws IOException {
@@ -54,6 +66,24 @@ public class CloudinaryServiceImpl implements ImageService {
         var url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
         user.setProfilePicture(url);
         return mapUserToPartialResponseDTO.map(usersRepository.save(user));
+    }
+
+    @Override
+    public AdvertResponseDto updateAdvertImage(Long id, MultipartFile file) throws IOException {
+        long maxFileSize = getMaxFileSizeInBytes();
+        if (file.getSize() > maxFileSize) {
+            throw new FileSizeExceededException();
+        }
+        var advert = advertRepository.findById(id).orElseThrow(()-> new NotFoundException(id));
+        var urlExistingImage = advert.getImageUrl();
+
+        if (urlExistingImage != null) {
+            var publicId = extractPublicIdFromUrl(urlExistingImage);
+            deleteImage(publicId);
+        }
+        var url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+        advert.setImageUrl(url);
+        return mapAdvertEntityToAdvertResponseDto.map(advert);
     }
 
     @Override

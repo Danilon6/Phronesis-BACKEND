@@ -9,10 +9,7 @@ import it.epicode.phronesis.businesslayer.dto.report.PostReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.report.UserReportResponseDTO;
 import it.epicode.phronesis.businesslayer.dto.userPostInteraction.*;
 import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
-import it.epicode.phronesis.datalayer.entities.Follow;
-import it.epicode.phronesis.datalayer.entities.Post;
-import it.epicode.phronesis.datalayer.entities.Roles;
-import it.epicode.phronesis.datalayer.entities.User;
+import it.epicode.phronesis.datalayer.entities.*;
 import it.epicode.phronesis.datalayer.entities.report.PostReport;
 import it.epicode.phronesis.datalayer.entities.report.UserReport;
 import it.epicode.phronesis.datalayer.entities.userPostInteraction.Comment;
@@ -47,8 +44,8 @@ public class BeansConfiguration {
 
 	@Bean
 	public Pageable defaultPageable() {
-		int page = 0; // Numero di pagina predefinito (prima pagina)
-		int size = 10; // Dimensione della pagina predefinita
+		int page = 0;
+		int size = 10;
 		return PageRequest.of(page, size);
 	}
 
@@ -180,6 +177,27 @@ public class BeansConfiguration {
 				.withCreatedAt(input.getCreatedAt())
 				.withUpdatedAt(input.getUpdatedAt())
 				.withRoleType(input.getRoleType())
+				.build();
+	}
+
+	//mapper per l'advert
+	@Bean
+	@Scope
+	Mapper<AdvertRequestDto, Advert> mapAdvertRequestDTOToAdvert () {
+		return (input) -> Advert.builder()
+				.withTitle(input.getTitle())
+				.withDescription(input.getDescription())
+				.build();
+	}
+
+	@Bean
+	@Scope
+	Mapper<Advert, AdvertResponseDto> mapAdvertEntityToAdvertResponseDto () {
+		return (input) -> AdvertResponseDto.builder()
+				.withId(input.getId())
+				.withTitle(input.getTitle())
+				.withDescription(input.getDescription())
+				.withImageUrl(input.getImageUrl())
 				.build();
 	}
 

@@ -17,4 +17,5 @@ public interface RegisteredUserPrj extends BaseProjection{
     String getBio();
     List<Roles> getRoles();
     boolean getEnabled();
+    boolean getBanned();
 }

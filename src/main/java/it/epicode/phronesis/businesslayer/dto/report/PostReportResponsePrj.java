@@ -8,5 +8,11 @@ public interface PostReportResponsePrj extends ReportResponsePrj {
     interface Post {
         Long getId();
         String getTitle();
+        User getUser();
+        interface User {
+            Long getId();
+            String getUsername();
+            String getProfilePicture();
+        }
     }
 }

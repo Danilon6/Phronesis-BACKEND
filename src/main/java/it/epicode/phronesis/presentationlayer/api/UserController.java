@@ -178,7 +178,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> banUser(
             @PathVariable Long id,
-            @RequestParam String reason) throws UnsupportedEmailEncodingException, EmailSendingException {
+            @RequestBody String reason) throws UnsupportedEmailEncodingException, EmailSendingException {
         userService.banUser(id, reason);
         return ResponseEntity.ok("User banned successfully.");
     }

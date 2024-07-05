@@ -1,5 +1,6 @@
 package it.epicode.phronesis.datalayer.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -12,8 +13,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder(setterPrefix = "with")
 public class Advert extends BaseEntity {
+    @Column(unique = true)
     private String title;
+    @Column(nullable = false)
     private String description;
-    private String imageUrl;  // URL dell'immagine
+    @Column(nullable = false)
+    private String imageUrl;
 
 }

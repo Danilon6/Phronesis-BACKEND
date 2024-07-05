@@ -17,6 +17,7 @@ import it.epicode.phronesis.config.JwtUtils;
 import it.epicode.phronesis.datalayer.entities.Roles;
 import it.epicode.phronesis.datalayer.entities.User;
 import it.epicode.phronesis.datalayer.entities.enums.JwtType;
+import it.epicode.phronesis.datalayer.repositories.FollowRepository;
 import it.epicode.phronesis.datalayer.repositories.RolesRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
@@ -60,6 +61,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UsersRepository usersRepository;
+
+    @Autowired
+    FollowRepository followRepository;
 
     @Autowired
     ApplicationUserDetailsService userDetailsService;
@@ -132,21 +136,24 @@ public class UserServiceImpl implements UserService {
                 userEntity.setPassword(p);
                         var totalUsers = this.getAll(defaultPageable);
 
-                        if (totalUsers.getTotalElements() == 0)
-                        {
-                            userEntity.getRoles().add(
-                                    Roles.builder()
-                                            .withRoleType("ADMIN")
-                                            .build()
-                            );
+                Roles role;
+                if (totalUsers.getTotalElements() == 0) {
+                    role = roles.findOneByRoleType("ADMIN").orElse(null);
+                    if (role == null) {
+                        role = Roles.builder().withRoleType("ADMIN").build();
+                        roles.save(role);
+                    }
+                } else {
+                    role = roles.findOneByRoleType("USER").orElse(null);
+                    if (role == null) {
+                        role = Roles.builder().withRoleType("USER").build();
+                        roles.save(role);
+                    }
+                }
 
-                        } else {
-                            userEntity.getRoles().add(
-                                    Roles.builder()
-                                            .withRoleType("USER")
-                                            .build()
-                            );
-                        }
+                if (!userEntity.getRoles().contains(role)) {
+                    userEntity.getRoles().add(role);
+                }
                         var uEntity = usersRepository.save(userEntity);
                     var u = mapRegisteredUser.map(uEntity);
                     var token = jwt.generateToken(u.getId());
@@ -258,11 +265,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public RegisteredUserDTO delete(Long id) {
         try {
-            var u = usersRepository.findById(id).orElseThrow();
-            //estraggo il publicId per l'eliminazione dell'imamgine che era associata all'utente
+            var u = usersRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+            //estraggo il publicId per l'eliminazione dell'immagine che era associata all'utente
             var publicID = cloudinaryService.extractPublicIdFromUrl(u.getProfilePicture());
             //elimino l'immagine
             cloudinaryService.deleteImage(publicID);
+            // Eliminare tutte le entità Follow dove l'utente è follower o following
+            var followByFollower = followRepository.findAllByFollower(u);
+            var followByFollowing = followRepository.findAllByFollowing(u);
+            followRepository.deleteAll(followByFollower);
+            followRepository.deleteAll(followByFollowing);
+            //elimino tutti
             //elimino l'utente
             usersRepository.delete(u);
             return mapRegisteredUser.map(u);

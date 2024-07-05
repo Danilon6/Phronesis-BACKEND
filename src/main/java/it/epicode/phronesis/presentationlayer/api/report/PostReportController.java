@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/post-report")
-public class PostReportController {
+public class  PostReportController {
 
     @Autowired
     PostReportService postReportService;
