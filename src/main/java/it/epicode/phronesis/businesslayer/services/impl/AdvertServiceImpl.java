@@ -85,19 +85,19 @@ public class AdvertServiceImpl implements AdvertService {
         }
         BeanUtils.copyProperties(e,a);
 
+        if (e.getImage() != null && !e.getImage().isEmpty()) {
         var imageFile = e.getImage();
-
         cloudinaryService.verifyMaxSizeOfFile(imageFile);
-
         var url = (String) cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap()).get("url");
-
         a.setImageUrl(url);
+
+        }
         return mapAdvertEntityToAdvertResponseDto.map(a);
     }
 
     @Override
     public AdvertResponseDto updateAdvertImage(Long id, MultipartFile file) throws IOException {
-        return null;
+        return cloudinaryService.updateAdvertImage(id, file);
     }
 
     @Override

@@ -10,5 +10,6 @@ public interface UserReportResponsePrj extends ReportResponsePrj {
         Long getId();
         String getUsername();
         String getProfilePicture();
+        boolean getBanned();
     }
 }

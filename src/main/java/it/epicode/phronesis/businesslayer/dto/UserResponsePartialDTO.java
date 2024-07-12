@@ -15,4 +15,6 @@ public class UserResponsePartialDTO extends BaseDTO {
     String username;
 
     String profilePicture;
+
+    boolean banned;
 }
