@@ -28,8 +28,10 @@ import it.epicode.phronesis.presentationlayer.api.exceptions.sendingEmail.Unsupp
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.*;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.banned.UserAlreadyBannedException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.banned.UserAlreadyUnbannedException;
+import it.epicode.phronesis.presentationlayer.api.exceptions.user.banned.UserBannedException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled.UserIsAlreadyEnabledException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.user.enabled.UserNotEnabledException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,7 +206,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<LoginResponseDTO> login(String username, String password) {
         try {
+            var u = usersRepository.findOneByUsername(username).orElseThrow(()-> new EntityNotFoundException("User not found"));
 
+            if (u.isBanned()) {
+                throw new UserBannedException(username);
+            }
             var a = auth.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
             SecurityContextHolder.getContext().setAuthentication(a);

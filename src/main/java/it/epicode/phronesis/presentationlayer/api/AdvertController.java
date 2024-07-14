@@ -53,6 +53,7 @@ public class AdvertController {
                 .withTitle(model.title())
                 .withDescription(model.description())
                 .withImage(advertImage)
+                        .withCreatedById(model.createdById())
                 .build());
         return new ResponseEntity<>(createdAdvert, HttpStatus.OK);
     }

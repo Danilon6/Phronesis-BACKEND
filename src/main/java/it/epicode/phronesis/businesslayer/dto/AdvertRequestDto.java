@@ -12,4 +12,5 @@ public class AdvertRequestDto extends BaseDTO{
     private String title;
     private String description;
     private MultipartFile image;
+    private Long CreatedById;
 }

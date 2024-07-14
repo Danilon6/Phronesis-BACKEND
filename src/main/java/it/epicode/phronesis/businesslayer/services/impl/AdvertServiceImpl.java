@@ -10,6 +10,7 @@ import it.epicode.phronesis.businesslayer.services.interfaces.Mapper;
 import it.epicode.phronesis.businesslayer.services.interfaces.image.ImageService;
 import it.epicode.phronesis.datalayer.entities.Advert;
 import it.epicode.phronesis.datalayer.repositories.AdvertRepository;
+import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.DuplicateTitleException;
 import org.springframework.beans.BeanUtils;
@@ -29,6 +30,9 @@ public class AdvertServiceImpl implements AdvertService {
 
     @Autowired
     AdvertRepository advertRepository ;
+
+    @Autowired
+    UsersRepository usersRepository;
 
     @Autowired
     Mapper<AdvertRequestDto, Advert> mapAdvertRequestDTOToAdvert;
@@ -62,7 +66,11 @@ public class AdvertServiceImpl implements AdvertService {
             throw new DuplicateTitleException(e.getTitle());
         }
 
+        var createdBy = usersRepository.findById(e.getCreatedById()).orElseThrow(()-> new NotFoundException(e.getCreatedById()));
+
         var advertEntity = mapAdvertRequestDTOToAdvert.map(e);
+
+        advertEntity.setCreatedBy(createdBy);
 
         var imageFile = e.getImage();
 
