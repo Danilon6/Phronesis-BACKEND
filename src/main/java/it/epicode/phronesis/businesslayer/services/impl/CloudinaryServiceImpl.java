@@ -16,6 +16,7 @@ import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.FileSizeExceededException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.ImageDeletionException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -80,7 +81,7 @@ public class CloudinaryServiceImpl implements ImageService {
         }
         var url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
         advert.setImageUrl(url);
-        return mapAdvertEntityToAdvertResponseDto.map(advert);
+        return mapAdvertEntityToAdvertResponseDto.map(advertRepository.save(advert));
     }
 
     @Override

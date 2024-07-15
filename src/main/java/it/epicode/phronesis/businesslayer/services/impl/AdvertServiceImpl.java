@@ -13,6 +13,7 @@ import it.epicode.phronesis.datalayer.repositories.AdvertRepository;
 import it.epicode.phronesis.datalayer.repositories.UsersRepository;
 import it.epicode.phronesis.presentationlayer.api.exceptions.NotFoundException;
 import it.epicode.phronesis.presentationlayer.api.exceptions.duplicated.DuplicateTitleException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,7 +99,6 @@ public class AdvertServiceImpl implements AdvertService {
         cloudinaryService.verifyMaxSizeOfFile(imageFile);
         var url = (String) cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap()).get("url");
         a.setImageUrl(url);
-
         }
         return mapAdvertEntityToAdvertResponseDto.map(a);
     }
