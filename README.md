@@ -12,7 +12,7 @@ Phronesis allows users to share experiences, reflections, and practical advice d
 
 ### Home Page
 
-- **Create Posts**: Users can create and share posts with texts and images detailing their personal experiences and reflections, including how they faced and overcame specific situations.
+- **Create Posts**: Users can create and share posts detailing their personal experiences and reflections, including how they faced and overcame specific situations.
 - **Likes**: Users can like posts from other users.
 - **Favorites**: Users can add posts to their favorites for easy future reference.
 
@@ -108,7 +108,7 @@ Phronesis permette agli utenti di condividere esperienze, riflessioni e consigli
 
 ### Home Page
 
-- **Creazione Post**: Gli utenti possono creare e condividere post con testi e immagini che raccontano le loro esperienze e riflessioni personali, inclusi dettagli su come hanno affrontato e superato determinate situazioni.
+- **Creazione Post**: Gli utenti possono creare e condividere post che raccontano le loro esperienze e riflessioni personali, inclusi dettagli su come hanno affrontato e superato determinate situazioni.
 - **Likes**: Possibilità di mettere "mi piace" ai post degli altri utenti.
 - **Preferiti**: Aggiungere post ai preferiti per una facile consultazione futura.
 
